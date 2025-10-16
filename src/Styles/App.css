@@ -1,0 +1,39 @@
+/* Generelle body styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f5f5f5;
+}
+
+/* Inputs og knapper */
+input, button {
+  margin: 5px 0;
+  padding: 8px;
+  font-size: 14px;
+}
+
+/* Knapper */
+button {
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Video styling */
+video {
+  display: block;
+  margin-bottom: 10px;
+  max-width: 100%;
+}
+
+/* Overskrifter */
+h1, h2 {
+  color: #333;
+}
