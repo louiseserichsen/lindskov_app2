@@ -19,15 +19,12 @@ export default function UploadPage() {
         if (!user) return;
         const rootRef = ref(storage, `userFolders/${user.uid}/`);
         const folderList = await listAll(rootRef);
-        const folders = folderList.prefixes.map((folderRef) =>
-          folderRef.name
-        );
+        const folders = folderList.prefixes.map((folderRef) => folderRef.name);
         setAvailableFolders(folders);
       } catch (err) {
         console.error("Kunne ikke hente mapper:", err);
       }
     }
-
     fetchFolders();
   }, []);
 
@@ -57,8 +54,13 @@ export default function UploadPage() {
     try {
       await uploadBytes(storageRef, file);
       const downloadURL = await getDownloadURL(storageRef);
-      setStatus(`✅ Filen "${file.name}" blev uploadet til mappen "${targetFolder}"`);
-      setUploadedFiles((prev) => [...prev, { name: file.name, url: downloadURL }]);
+      setStatus(
+        `✅ Filen "${file.name}" blev uploadet til mappen "${targetFolder}"`
+      );
+      setUploadedFiles((prev) => [
+        ...prev,
+        { name: file.name, url: downloadURL },
+      ]);
       if (!availableFolders.includes(targetFolder)) {
         setAvailableFolders((prev) => [...prev, targetFolder]);
       }
@@ -86,6 +88,13 @@ export default function UploadPage() {
       })
     );
     setUploadedFiles(files);
+  };
+
+  // Dynamisk farve på statusmeddelelser
+  const getStatusStyle = () => {
+    if (status.includes("❌ Vælg en fil først"))
+      return { ...styles.status, color: "#C00000" };
+    return styles.status;
   };
 
   return (
@@ -147,16 +156,27 @@ export default function UploadPage() {
             {uploading ? "Uploader..." : "Upload"}
           </button>
         </form>
-        {status && <p style={styles.status}>{status}</p>}
+        {status && <p style={getStatusStyle()}>{status}</p>}
       </div>
 
       {uploadedFiles.length > 0 && (
         <div style={styles.section}>
+          <p style={styles.sharedToText}>
+            Her vises filer du har delt til: kunde1
+          </p>
+          <p style={styles.sharedFromText}>
+            Her vises filer delt med dig fra: kunde1
+          </p>
           <h3>📜 Filer i mappen: {selectedFolder}</h3>
           <ul style={styles.fileList}>
             {uploadedFiles.map((file, idx) => (
               <li key={idx}>
-                <a href={file.url} target="_blank" rel="noreferrer">
+                <a
+                  href={file.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ color: "#000", textDecoration: "none" }}
+                >
                   {file.name}
                 </a>
               </li>
@@ -177,8 +197,9 @@ const styles = {
     flexDirection: "column",
     alignItems: "center",
     gap: "30px",
+    color: "#000",
   },
-  title: { fontSize: "26px", fontWeight: "bold", color: "#333" },
+  title: { fontSize: "26px", fontWeight: "bold", color: "#000" },
   section: {
     backgroundColor: "#fff",
     padding: "20px",
@@ -186,17 +207,15 @@ const styles = {
     boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
     width: "100%",
     maxWidth: "600px",
+    color: "#000",
   },
-  folderControls: {
-    display: "flex",
-    gap: "10px",
-    marginBottom: "10px",
-  },
+  folderControls: { display: "flex", gap: "10px", marginBottom: "10px" },
   input: {
     flex: 1,
     padding: "8px",
     border: "1px solid #ccc",
     borderRadius: "6px",
+    color: "#000",
   },
   button: {
     backgroundColor: "#C8A800",
@@ -207,21 +226,18 @@ const styles = {
     cursor: "pointer",
     fontWeight: "bold",
   },
-  folderList: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "8px",
-  },
+  folderList: { display: "flex", flexWrap: "wrap", gap: "8px" },
   folderButton: {
     backgroundColor: "#eee",
     border: "none",
     borderRadius: "6px",
     padding: "6px 10px",
     cursor: "pointer",
+    color: "#000",
   },
   activeFolder: {
     backgroundColor: "#C8A800",
-    color: "#fff",
+    color: "#000",
     border: "none",
     borderRadius: "6px",
     padding: "6px 10px",
@@ -233,7 +249,9 @@ const styles = {
     alignItems: "center",
     gap: "10px",
   },
-  fileInput: { cursor: "pointer" },
-  status: { marginTop: "10px", fontWeight: "bold" },
-  fileList: { marginTop: "10px", listStyle: "none", paddingLeft: 0 },
+  fileInput: { cursor: "pointer", color: "#000" },
+  status: { marginTop: "10px", fontWeight: "bold", color: "#000" },
+  fileList: { marginTop: "10px", listStyle: "none", paddingLeft: 0, color: "#000" },
+  sharedToText: { color: "#006400", fontWeight: "bold", marginTop: "10px" }, // grøn
+  sharedFromText: { color: "#003366", fontWeight: "bold", marginTop: "5px" }, // blå
 };

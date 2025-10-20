@@ -9,7 +9,7 @@ import ProfilePage from "./pages/ProfilePage.jsx";
 import UploadPage from "./pages/UploadPage.jsx";
 import FilesPage from "./pages/FilesPage.jsx";
 import HelpPage from "./pages/HelpPage.jsx";
-import EventsPage from "./pages/EventsPage.jsx"; // ✅ Sørg for korrekt export
+import EventsPage from "./pages/EventsPage.jsx";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -29,7 +29,6 @@ function App() {
     setDropdownOpen(false);
   };
 
-  // Styling
   const navStyle = {
     display: "flex",
     alignItems: "center",
@@ -42,7 +41,6 @@ function App() {
     zIndex: 1000,
     boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
   };
-
   const logoStyle = { height: "50px", width: "auto", marginRight: "30px", borderRadius: "8px" };
   const dropdownButton = { backgroundColor: "#C8A800", color: "#fff", border: "none", borderRadius: 4, padding: "8px 14px", cursor: "pointer", fontWeight: "bold" };
   const dropdownStyle = { position: "absolute", left: 120, top: 55, backgroundColor: "#fff", border: "1px solid #ccc", borderRadius: 6, boxShadow: "0 2px 8px rgba(0,0,0,0.2)", zIndex: 1000, padding: 10, display: "flex", flexDirection: "column" };
@@ -65,8 +63,7 @@ function App() {
             {user && <Link to="/upload" style={linkStyle} onClick={() => setDropdownOpen(false)}>Filer</Link>}
             {user && <Link to="/files" style={linkStyle} onClick={() => setDropdownOpen(false)}>Delte filer</Link>}
             {user && <Link to="/help" style={linkStyle} onClick={() => setDropdownOpen(false)}>FAQ</Link>}
-            {/* Tilmelding altid tilgængelig */}
-            <Link to="/events" style={linkStyle} onClick={() => setDropdownOpen(false)}>Tilmelding</Link>
+            {user && <Link to="/events" style={linkStyle} onClick={() => setDropdownOpen(false)}>Tilmelding</Link>}
             {user && <button style={logoutBtn} onClick={handleLogout}>Log ud</button>}
             {!user && <Link to="/login" style={linkStyle} onClick={() => setDropdownOpen(false)}>Login</Link>}
           </div>
@@ -81,9 +78,7 @@ function App() {
           <Route path="/upload" element={user ? <UploadPage /> : <Navigate to="/login" />} />
           <Route path="/files" element={user ? <FilesPage /> : <Navigate to="/login" />} />
           <Route path="/help" element={user ? <HelpPage /> : <Navigate to="/login" />} />
-          {/* Events altid tilgængelig */}
-          <Route path="/events" element={<EventsPage />} />
-          {/* Fallback */}
+          <Route path="/events" element={user ? <EventsPage /> : <Navigate to="/login" />} />
           <Route path="*" element={<p>Page not found</p>} />
         </Routes>
       </div>
