@@ -24,10 +24,10 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: #242424;
+  color: rgba(255,255,255,0.87);
 }
 
 h1 {
@@ -54,6 +54,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Lys tilstand */
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -65,4 +66,14 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+/* Ny container til centreret indhold */
+#main-content {
+  display: flex;
+  justify-content: center; /* vandret centreret */
+  align-items: center;     /* lodret centreret */
+  min-height: calc(100vh - 60px); /* hvis navbar ca 60px */
+  padding: 20px;
+  box-sizing: border-box;
 }

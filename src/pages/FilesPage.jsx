@@ -8,7 +8,7 @@ export default function FilesPage() {
   const [uploadStatus, setUploadStatus] = useState("");
   const [activeSender, setActiveSender] = useState("kunde1");
   const [activeReceiver, setActiveReceiver] = useState("kunde1");
-  const [receivedFiles, setReceivedFiles] = useState([]); // <-- Liste over uploadede filer
+  const [receivedFiles, setReceivedFiles] = useState([]);
 
   const customers = ["kunde1", "kunde2", "kunde3"];
 
@@ -45,7 +45,6 @@ export default function FilesPage() {
       });
 
       setUploadStatus(`✅ Fil "${selectedFile.name}" uploaded!`);
-      // Tilføj fil til "Filer delt med dig"-listen
       setReceivedFiles((prev) => [...prev, selectedFile.name]);
       setSelectedFile(null);
     } catch (error) {
@@ -120,7 +119,6 @@ const styles = {
     placeItems: "center",
     backgroundColor: "#f3f3f3",
     padding: "20px",
-    boxSizing: "border-box",
   },
   wrapper: {
     display: "flex",
@@ -129,8 +127,6 @@ const styles = {
     gap: "30px",
     width: "100%",
     maxWidth: "900px",
-    padding: "20px",
-    boxSizing: "border-box",
   },
   row: {
     display: "flex",
@@ -140,18 +136,8 @@ const styles = {
     flexWrap: "wrap",
     width: "100%",
   },
-  title: {
-    fontSize: "28px",
-    fontWeight: "bold",
-    color: "#333",
-    textAlign: "center",
-  },
-  uploadSection: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: "10px",
-  },
+  title: { fontSize: "28px", fontWeight: "bold", color: "#333" },
+  uploadSection: { display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" },
   fileInput: { cursor: "pointer" },
   uploadBtn: {
     backgroundColor: "#C8A800",
@@ -178,30 +164,28 @@ const styles = {
     marginBottom: "15px",
     borderBottom: "2px solid #C8A800",
     paddingBottom: "8px",
-    textAlign: "center",
-    width: "100%",
   },
   customerTabs: {
     display: "flex",
     gap: "10px",
-    marginBottom: "15px",
-    justifyContent: "center",
-    width: "100%",
+    marginBottom: "10px",
   },
   tab: {
     backgroundColor: "#eee",
-    border: "1px solid #ccc",
+    border: "none",
+    padding: "8px 12px",
     borderRadius: "6px",
-    padding: "6px 12px",
     cursor: "pointer",
+    fontWeight: "bold",
   },
   activeTab: {
     backgroundColor: "#C8A800",
     color: "#fff",
-    border: "1px solid #C8A800",
+    border: "none",
+    padding: "8px 12px",
     borderRadius: "6px",
-    padding: "6px 12px",
     cursor: "pointer",
+    fontWeight: "bold",
   },
-  filesList: { textAlign: "center", fontStyle: "italic", width: "100%" },
+  filesList: { textAlign: "center" },
 };
