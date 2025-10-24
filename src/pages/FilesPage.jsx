@@ -8,22 +8,18 @@ export default function FilesPage() {
   const [uploadStatus, setUploadStatus] = useState("");
   const [activeSender, setActiveSender] = useState("kunde1");
   const [activeReceiver, setActiveReceiver] = useState("kunde1");
-  const [sentFiles, setSentFiles] = useState([]); // 👈 filer sendt af brugeren
-  const [receivedFiles, setReceivedFiles] = useState([]); // 👈 filer modtaget
+  const [sentFiles, setSentFiles] = useState([]);
+  const [receivedFiles, setReceivedFiles] = useState([]);
 
   const customers = ["kunde1", "kunde2", "kunde3"];
 
-  // Når man vælger en fil
   const handleFileChange = (e) => {
     if (e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
       setUploadStatus(`✅ "${e.target.files[0].name}" valgt`);
-    } else {
-      setUploadStatus("❌ Der er ikke valgt nogen fil");
     }
   };
 
-  // Upload til Firebase Storage og Firestore
   const handleUpload = async () => {
     if (!selectedFile) {
       setUploadStatus("❌ Vælg en fil før upload");
@@ -50,12 +46,10 @@ export default function FilesPage() {
       });
 
       setUploadStatus(`✅ Fil "${selectedFile.name}" uploaded!`);
-      // tilføj filen til listen for aktive kunde
       setSentFiles((prev) => [
         ...prev,
         { name: selectedFile.name, customer: activeSender },
       ]);
-
       setSelectedFile(null);
     } catch (error) {
       console.error(error);
@@ -63,9 +57,7 @@ export default function FilesPage() {
     }
   };
 
-  // Bestem farve på statusbesked
   const getStatusStyle = (text) => {
-    if (text.includes("❌ Der er ikke valgt nogen fil")) return { ...styles.status, color: "black" };
     if (text.includes("❌ Vælg en fil før upload")) return { ...styles.status, color: "black" };
     if (text.includes("❌")) return { ...styles.status, color: "red" };
     if (text.includes("✅")) return { ...styles.status, color: "green" };
@@ -75,10 +67,13 @@ export default function FilesPage() {
   return (
     <div style={styles.pageWrapper}>
       <div style={styles.wrapper}>
-        <h2 style={styles.title}>📂 Dine filer</h2>
+        <h2 style={styles.title}>📂 Delte filer</h2>
 
-        <div style={styles.uploadSection}>
-          <input type="file" onChange={handleFileChange} style={styles.fileInput} />
+        <div style={{ ...styles.uploadSection, gap: "10px" }}>
+          <label style={styles.uploadBtn}>
+            Vælg fil
+            <input type="file" onChange={handleFileChange} style={{ display: "none" }} />
+          </label>
           <button style={styles.uploadBtn} onClick={handleUpload}>
             Upload
           </button>
@@ -87,7 +82,6 @@ export default function FilesPage() {
         {uploadStatus && <p style={getStatusStyle(uploadStatus)}>{uploadStatus}</p>}
 
         <div style={styles.row}>
-          {/* Filer sendt af brugeren */}
           <div style={styles.box}>
             <h3 style={styles.boxTitle}>Filer delt af dig</h3>
             <div style={styles.customerTabs}>
@@ -115,7 +109,6 @@ export default function FilesPage() {
             </div>
           </div>
 
-          {/* Filer modtaget af brugeren */}
           <div style={styles.box}>
             <h3 style={styles.boxTitle}>Filer delt med dig</h3>
             <div style={styles.customerTabs}>
@@ -151,7 +144,7 @@ const styles = {
     minHeight: "100vh",
     display: "grid",
     placeItems: "center",
-    backgroundColor: "#f3f3f3",
+    background: 'url("/11.jpg") no-repeat center center / cover',
     padding: "20px",
   },
   wrapper: {
@@ -170,9 +163,8 @@ const styles = {
     flexWrap: "wrap",
     width: "100%",
   },
-  title: { fontSize: "28px", fontWeight: "bold", color: "#333" },
-  uploadSection: { display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" },
-  fileInput: { cursor: "pointer" },
+  title: { fontSize: "28px", fontWeight: "bold", color: "#C8A800" },
+  uploadSection: { display: "flex", alignItems: "center" },
   uploadBtn: {
     backgroundColor: "#C8A800",
     color: "#fff",
@@ -180,11 +172,12 @@ const styles = {
     borderRadius: "8px",
     padding: "10px 16px",
     cursor: "pointer",
+    fontWeight: "bold",
   },
   status: { textAlign: "center", fontWeight: "bold" },
   goldText: { color: "#C8A800", fontWeight: "bold", textAlign: "center" },
   box: {
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
     borderRadius: "12px",
     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
     padding: "20px",

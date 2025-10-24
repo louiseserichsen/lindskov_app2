@@ -77,13 +77,34 @@ export default function EventsPage() {
 }
 
 const styles = {
-  navStyle: { display: "flex", alignItems: "center", justifyContent: "flex-start", padding: "10px 20px", backgroundColor: "#000", position: "fixed", top: 0, width: "100%", zIndex: 1000, boxShadow: "0 2px 8px rgba(0,0,0,0.3)" },
+  navStyle: { 
+    display: "flex", 
+    alignItems: "center", 
+    justifyContent: "flex-start", 
+    padding: "10px 20px", 
+    backgroundColor: "#000", 
+    position: "fixed", 
+    top: 0, 
+    width: "100%", 
+    zIndex: 1000, 
+    boxShadow: "0 2px 8px rgba(0,0,0,0.3)" 
+  },
   logoStyle: { height: "50px", width: "auto", marginRight: "30px", borderRadius: "8px" },
   dropdownButton: { backgroundColor: "#C8A800", color: "#fff", border: "none", borderRadius: 4, padding: "8px 14px", cursor: "pointer", fontWeight: "bold" },
   dropdownStyle: { position: "absolute", left: 120, top: 55, backgroundColor: "#fff", border: "1px solid #ccc", borderRadius: 6, boxShadow: "0 2px 8px rgba(0,0,0,0.2)", zIndex: 1000, padding: 10, display: "flex", flexDirection: "column" },
   linkStyle: { color: "#C8A800", textDecoration: "none", margin: "6px 0", fontWeight: "bold" },
   logoutBtn: { display: "block", background: "none", border: "none", padding: 8, width: "100%", textAlign: "left", color: "#C8A800", cursor: "pointer", fontWeight: "bold" },
-  pageWrapper: { display: "grid", placeItems: "center", minHeight: "100vh", width: "100%", background: "#f5f5f5", paddingTop: "80px", boxSizing: "border-box" },
+
+  pageWrapper: { 
+    display: "grid", 
+    placeItems: "center", 
+    minHeight: "100vh", 
+    width: "100%", 
+    background: 'url("/8.jpg") no-repeat center center / cover', // 🔹 Ny baggrund
+    paddingTop: "80px", 
+    boxSizing: "border-box" 
+  },
+
   card: { background: "#fff", padding: "40px 30px", borderRadius: "16px", boxShadow: "0 4px 12px rgba(0,0,0,0.15)", width: "100%", maxWidth: "500px", textAlign: "center" },
   title: { color: "#C8A800", marginBottom: "25px" },
   list: { listStyle: "none", padding: 0, margin: 0 },

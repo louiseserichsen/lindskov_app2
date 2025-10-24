@@ -191,7 +191,7 @@ export default function UploadPage() {
 const styles = {
   wrapper: {
     minHeight: "100vh",
-    background: "#f7f7f7",
+    background: 'url("/10.jpg") no-repeat center center / cover',
     padding: "40px",
     display: "flex",
     flexDirection: "column",
@@ -199,9 +199,13 @@ const styles = {
     gap: "30px",
     color: "#000",
   },
-  title: { fontSize: "26px", fontWeight: "bold", color: "#000" },
+  title: { 
+    fontSize: "26px", 
+    fontWeight: "bold", 
+    color: "#C8A800" // 🔹 gylden farve som knapperne
+  },
   section: {
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
     padding: "20px",
     borderRadius: "12px",
     boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
@@ -252,6 +256,6 @@ const styles = {
   fileInput: { cursor: "pointer", color: "#000" },
   status: { marginTop: "10px", fontWeight: "bold", color: "#000" },
   fileList: { marginTop: "10px", listStyle: "none", paddingLeft: 0, color: "#000" },
-  sharedToText: { color: "#006400", fontWeight: "bold", marginTop: "10px" }, // grøn
-  sharedFromText: { color: "#003366", fontWeight: "bold", marginTop: "5px" }, // blå
+  sharedToText: { color: "#006400", fontWeight: "bold", marginTop: "10px" },
+  sharedFromText: { color: "#003366", fontWeight: "bold", marginTop: "5px" },
 };

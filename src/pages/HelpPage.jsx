@@ -1,19 +1,59 @@
 // src/pages/HelpPage.jsx
-import React from "react";
+import React, { useState } from "react";
 
 export default function HelpPage() {
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const faqItems = [
+    {
+      question: "Hvordan opretter jeg en konto?",
+      answer:
+        "Klik på 'Opret konto' øverst på siden og udfyld formularen med dit navn, e-mail og adgangskode. Du modtager derefter en bekræftelsesmail.",
+    },
+    {
+      question: "Jeg har glemt min adgangskode – hvad gør jeg?",
+      answer:
+        "Tryk på 'Glemt adgangskode' på login-siden, og følg instruktionerne for at nulstille din adgangskode via e-mail.",
+    },
+    {
+      question: "Hvordan ændrer jeg mine profiloplysninger?",
+      answer:
+        "Gå til 'Min profil' og klik på 'Rediger'. Her kan du ændre dine oplysninger og gemme ændringerne med et enkelt klik.",
+    },
+    {
+      question: "Hvilke betalingsmetoder accepteres?",
+      answer:
+        "Vi accepterer betaling med kreditkort, MobilePay og PayPal. Alle betalinger håndteres sikkert gennem krypterede forbindelser.",
+    },
+    {
+      question: "Hvordan kontakter jeg support?",
+      answer:
+        "Du kan kontakte os via kontaktformularen på siden eller sende en mail til support@example.com. Vi besvarer henvendelser inden for 24 timer.",
+    },
+  ];
+
+  const toggleBox = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
   return (
     <div className="help-banner">
       <h1 className="help-title">FAQ</h1>
 
-      {/* 5 ens bokse oven på hinanden */}
-      {[...Array(5)].map((_, i) => (
-        <div key={i} className="help-box">
-          <h3>Eksempel spørgsmål {i + 1}</h3>
-          <p>
-            Her kan du skrive vejledningstekst eller svar på spørgsmål. Teksten
-            vises inde i boksen med den mørke baggrund, og baggrundsbilledet fylder
-            hele siden som på forsiden.
+      {/* Dynamisk genererede bokse med åbne/lukke funktion */}
+      {faqItems.map((item, i) => (
+        <div
+          key={i}
+          className={`help-box ${openIndex === i ? "open" : ""}`}
+          onClick={() => toggleBox(i)}
+        >
+          <h3>{item.question}</h3>
+          <p
+            className={`help-answer ${
+              openIndex === i ? "visible" : "hidden"
+            }`}
+          >
+            {item.answer}
           </p>
         </div>
       ))}
@@ -42,7 +82,7 @@ export default function HelpPage() {
         .help-banner {
           width: 100%;
           min-height: 100vh;
-          background: url("/lindskov3.jpg") no-repeat center center / cover;
+          background: url("/7.jpg") no-repeat center center / cover;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -51,7 +91,7 @@ export default function HelpPage() {
         }
 
         .help-title {
-          color: #fff;
+          color: #C8A800; /* Guld-farve */
           margin-bottom: 40px;
           font-size: 3rem;
         }
@@ -61,14 +101,49 @@ export default function HelpPage() {
           border-radius: 12px;
           max-width: 800px;
           width: 100%;
-          padding: 30px;
-          margin-top: 40px;
+          padding: 25px 30px;
+          margin-top: 25px;
           line-height: 1.6;
           color: #fff;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+        }
+
+        .help-box:hover {
+          background-color: rgba(50,50,50,0.95);
         }
 
         .help-box h3 {
           margin-top: 0;
+          color: #C8A800;
+          position: relative;
+        }
+
+        /* Tilføj pil */
+        .help-box h3::after {
+          content: "›";
+          position: absolute;
+          right: 0;
+          top: 0;
+          transform: rotate(90deg);
+          transition: transform 0.3s ease;
+        }
+
+        .help-box.open h3::after {
+          transform: rotate(-90deg);
+        }
+
+        .help-answer {
+          max-height: 0;
+          overflow: hidden;
+          opacity: 0;
+          transition: all 0.4s ease;
+        }
+
+        .help-answer.visible {
+          max-height: 300px;
+          opacity: 1;
+          margin-top: 10px;
         }
 
         @media (max-width: 768px) {
@@ -82,7 +157,20 @@ export default function HelpPage() {
 
           .help-box {
             padding: 20px;
-            line-height: 1.5;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .help-banner {
+            padding: 15px 10px;
+          }
+
+          .help-title {
+            font-size: 1.8rem;
+          }
+
+          .help-box {
+            padding: 15px;
           }
         }
       `}</style>

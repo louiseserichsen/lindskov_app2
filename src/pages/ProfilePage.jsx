@@ -159,7 +159,7 @@ const styles = {
     placeItems: "center",
     minHeight: "100vh",
     width: "100%",
-    background: "#f5f5f5",
+    background: 'url("/5.jpg") no-repeat center center / cover', // 🔹 Ny baggrund
     padding: "20px",
     boxSizing: "border-box",
   },
