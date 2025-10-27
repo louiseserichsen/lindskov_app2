@@ -23,7 +23,7 @@ export default function HelpPage() {
         "Gå til 'Min profil' og klik på 'Rediger'. Her kan du ændre dine oplysninger og gemme ændringerne med et enkelt klik.",
     },
     {
-      question: "Hvilke betalingsmetoder accepteres?",
+      question: "Hvordan uploader og deler jeg filer?",
       answer:
         "Vi accepterer betaling med kreditkort, MobilePay og PayPal. Alle betalinger håndteres sikkert gennem krypterede forbindelser.",
     },
