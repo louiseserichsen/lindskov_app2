@@ -1,8 +1,10 @@
 // src/pages/HelpPage.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function HelpPage() {
   const [openIndex, setOpenIndex] = useState(null);
+  const [animateTitle, setAnimateTitle] = useState(false);
+  const [animateContent, setAnimateContent] = useState(false);
 
   const faqItems = [
     {
@@ -32,53 +34,43 @@ export default function HelpPage() {
     },
   ];
 
+  useEffect(() => {
+    const timer1 = setTimeout(() => setAnimateTitle(true), 300);
+    const timer2 = setTimeout(() => setAnimateContent(true), 600); // fade-in FAQ indhold
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
+  }, []);
+
   const toggleBox = (index) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
   return (
     <div className="help-banner">
-      <h1 className="help-title">FAQ</h1>
+      <h1 className={`help-title ${animateTitle ? "animate" : ""}`}>FAQ</h1>
 
-      {/* Dynamisk genererede bokse med åbne/lukke funktion */}
-      {faqItems.map((item, i) => (
-        <div
-          key={i}
-          className={`help-box ${openIndex === i ? "open" : ""}`}
-          onClick={() => toggleBox(i)}
-        >
-          <h3>{item.question}</h3>
-          <p
-            className={`help-answer ${
-              openIndex === i ? "visible" : "hidden"
-            }`}
+      <div className={`faq-content ${animateContent ? "animate" : ""}`}>
+        {faqItems.map((item, i) => (
+          <div
+            key={i}
+            className={`help-box ${openIndex === i ? "open" : ""}`}
+            onClick={() => toggleBox(i)}
           >
-            {item.answer}
-          </p>
-        </div>
-      ))}
+            <h3>{item.question}</h3>
+            <p className={`help-answer ${openIndex === i ? "visible" : "hidden"}`}>
+              {item.answer}
+            </p>
+          </div>
+        ))}
+      </div>
 
-      {/* --- CSS --- */}
       <style>{`
-        * {
-          box-sizing: border-box;
-          margin: 0;
-          padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body, #root { height: 100%; width: 100%; }
+        body { font-family: Arial, sans-serif; background-color: #111; color: #fff; overflow-x: hidden; }
 
-        html, body, #root {
-          height: 100%;
-          width: 100%;
-        }
-
-        body {
-          font-family: Arial, sans-serif;
-          background-color: #111;
-          color: #fff;
-          overflow-x: hidden;
-        }
-
-        /* Hele siden med baggrund */
         .help-banner {
           width: 100%;
           min-height: 100vh;
@@ -90,10 +82,36 @@ export default function HelpPage() {
           padding: 40px 20px;
         }
 
+        @keyframes fadeSlideDown {
+          0% { opacity: 0; transform: translateY(-20px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+
         .help-title {
-          color: #C8A800; /* Guld-farve */
+          color: #C8A800;
           margin-bottom: 40px;
           font-size: 3rem;
+          opacity: 0;
+          text-align: center;
+          text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+        }
+
+        .help-title.animate {
+          opacity: 1;
+          animation: fadeSlideDown 1s ease forwards;
+        }
+
+        /* Centrering af FAQ bokse */
+        .faq-content {
+          opacity: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
+        }
+        .faq-content.animate {
+          opacity: 1;
+          animation: fadeSlideDown 1s ease forwards;
         }
 
         .help-box {
@@ -109,29 +127,25 @@ export default function HelpPage() {
           transition: background-color 0.3s ease;
         }
 
-        .help-box:hover {
-          background-color: rgba(50,50,50,0.95);
-        }
+        .help-box:hover { background-color: rgba(50,50,50,0.95); }
 
         .help-box h3 {
           margin-top: 0;
           color: #C8A800;
           position: relative;
+          text-align: center;
         }
 
-        /* Tilføj pil */
         .help-box h3::after {
           content: "›";
           position: absolute;
-          right: 0;
-          top: 0;
-          transform: rotate(90deg);
+          right: 10px;
+          top: 50%;
+          transform: translateY(-50%) rotate(90deg);
           transition: transform 0.3s ease;
         }
 
-        .help-box.open h3::after {
-          transform: rotate(-90deg);
-        }
+        .help-box.open h3::after { transform: translateY(-50%) rotate(-90deg); }
 
         .help-answer {
           max-height: 0;
@@ -147,31 +161,15 @@ export default function HelpPage() {
         }
 
         @media (max-width: 768px) {
-          .help-banner {
-            padding: 20px 15px;
-          }
-
-          .help-title {
-            font-size: 2rem;
-          }
-
-          .help-box {
-            padding: 20px;
-          }
+          .help-banner { padding: 20px 15px; }
+          .help-title { font-size: 2rem; }
+          .help-box { padding: 20px; }
         }
 
         @media (max-width: 480px) {
-          .help-banner {
-            padding: 15px 10px;
-          }
-
-          .help-title {
-            font-size: 1.8rem;
-          }
-
-          .help-box {
-            padding: 15px;
-          }
+          .help-banner { padding: 15px 10px; }
+          .help-title { font-size: 1.8rem; }
+          .help-box { padding: 15px; }
         }
       `}</style>
     </div>

@@ -1,5 +1,5 @@
 // src/pages/LoginPage.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { auth } from "../firebase.jsx";
 import {
   signInWithEmailAndPassword,
@@ -11,8 +11,13 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [animateTitle, setAnimateTitle] = useState(false);
 
-  // --- LOGIN ---
+  useEffect(() => {
+    const timer = setTimeout(() => setAnimateTitle(true), 300);
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -25,7 +30,6 @@ function LoginPage() {
     }
   };
 
-  // --- OPRET BRUGER ---
   const handleSignup = async () => {
     setError("");
     setMessage("");
@@ -44,95 +48,154 @@ function LoginPage() {
   };
 
   return (
-    <div style={{ textAlign: "center", padding: "40px" }}>
-      <h2 style={{ color: "#C8A800", marginBottom: "20px" }}>
-        Login eller opret bruger
-      </h2>
+    <div className="login-banner">
+      <div className="login-content">
+        <h2 className={`fade-title ${animateTitle ? "animate" : ""}`}>
+          Login eller opret bruger
+        </h2>
 
-      <form
-        onSubmit={handleLogin}
-        style={{
-          display: "inline-block",
-          textAlign: "left",
-          backgroundColor: "rgba(34, 34, 34, 0.9)",
-          padding: "30px",
-          borderRadius: "10px",
-          color: "#fff",
-          boxShadow: "0 0 10px rgba(0,0,0,0.3)",
-        }}
-      >
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{
-              display: "block",
-              margin: "8px 0",
-              padding: "8px",
-              width: "250px",
-              borderRadius: "5px",
-              border: "none",
-            }}
-          />
-        </div>
+        <form onSubmit={handleLogin} className="login-form">
+          <div>
+            <label>Email:</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-        <div>
-          <label>Kodeord:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{
-              display: "block",
-              margin: "8px 0 16px 0",
-              padding: "8px",
-              width: "250px",
-              borderRadius: "5px",
-              border: "none",
-            }}
-          />
-        </div>
+          <div>
+            <label>Kodeord:</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-        {/* FEJL OG BESKEDER */}
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {message && <p style={{ color: "lightgreen" }}>{message}</p>}
+          {error && <p className="error">{error}</p>}
+          {message && <p className="message">{message}</p>}
 
-        {/* KNAPPER */}
-        <div style={{ display: "flex", gap: "10px" }}>
-          <button
-            type="submit"
-            style={{
-              background: "#C8A800",
-              color: "#fff",
-              border: "none",
-              padding: "10px 20px",
-              borderRadius: "6px",
-              cursor: "pointer",
-            }}
-          >
-            Log ind
-          </button>
+          <div className="btn-row">
+            <button type="submit" className="login-btn">Log ind</button>
+            <button type="button" onClick={handleSignup} className="signup-btn">
+              Opret bruger
+            </button>
+          </div>
+        </form>
+      </div>
 
-          <button
-            type="button"
-            onClick={handleSignup}
-            style={{
-              background: "#444",
-              color: "#fff",
-              border: "none",
-              padding: "10px 20px",
-              borderRadius: "6px",
-              cursor: "pointer",
-            }}
-          >
-            Opret bruger
-          </button>
-        </div>
-      </form>
+      <style>{`
+        html, body {
+          height: 100%;
+          width: 100%;
+          overflow-x: hidden; /* forhindrer vandret scroll */
+          margin: 0;
+          padding: 0;
+        }
+
+        .login-banner {
+          width: 100%;
+          min-height: 100vh;
+          background-image: url("/12.jpg");
+          background-repeat: no-repeat;
+          background-size: cover; /* fylder hele containeren */
+          background-position: center center;
+          background-attachment: fixed; /* holder baggrunden på plads */
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+          text-align: center;
+          padding-top: 560px; /* rykket 20px op */
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+
+        .login-content {
+          background: rgba(0, 0, 0, 0.6);
+          padding: 30px 40px;
+          border-radius: 12px;
+          width: 100%;
+          max-width: 480px;
+          box-sizing: border-box;
+        }
+
+        .fade-title {
+          font-size: 3rem;
+          color: #C8A800;
+          text-shadow: 3px 3px 6px rgba(0,0,0,0.8);
+          opacity: 0;
+          margin-bottom: 20px;
+        }
+
+        .fade-title.animate {
+          animation: fadeSlideDown 1s ease forwards;
+        }
+
+        @keyframes fadeSlideDown {
+          0% { opacity: 0; transform: translateY(-20px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-form {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .login-form input {
+          display: block;
+          width: 100%;
+          padding: 10px;
+          border-radius: 5px;
+          border: none;
+          margin-top: 5px;
+        }
+
+        .btn-row {
+          display: flex;
+          gap: 10px;
+          margin-top: 10px;
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+
+        .login-btn {
+          background: #C8A800;
+          color: #fff;
+          border: none;
+          padding: 10px 20px;
+          border-radius: 6px;
+          cursor: pointer;
+        }
+
+        .signup-btn {
+          background: #444;
+          color: #fff;
+          border: none;
+          padding: 10px 20px;
+          border-radius: 6px;
+          cursor: pointer;
+        }
+
+        .error { color: red; }
+        .message { color: lightgreen; }
+
+        @media (max-width: 768px) {
+          .login-banner { padding-top: 440px; }
+          .fade-title { font-size: 2.2rem; }
+          .login-content { padding: 25px 30px; max-width: 90%; }
+        }
+
+        @media (max-width: 480px) {
+          .login-banner { padding-top: 360px; }
+          .fade-title { font-size: 1.8rem; }
+          .login-content { padding: 20px 20px; width: 95%; }
+        }
+      `}</style>
     </div>
   );
 }

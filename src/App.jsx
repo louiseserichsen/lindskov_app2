@@ -58,7 +58,7 @@ function App() {
 
         {dropdownOpen && (
           <div style={dropdownStyle}>
-            <Link to="/" style={linkStyle} onClick={() => setDropdownOpen(false)}>Home</Link>
+            <Link to="/" style={linkStyle} onClick={() => setDropdownOpen(false)}>Forside</Link>
             {user && <Link to="/profile" style={linkStyle} onClick={() => setDropdownOpen(false)}>Profil</Link>}
             {user && <Link to="/upload" style={linkStyle} onClick={() => setDropdownOpen(false)}>Filer</Link>}
             {user && <Link to="/files" style={linkStyle} onClick={() => setDropdownOpen(false)}>Delte filer</Link>}
@@ -87,3 +87,5 @@ function App() {
 }
 
 export default App;
+
+

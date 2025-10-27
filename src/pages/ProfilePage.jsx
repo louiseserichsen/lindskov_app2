@@ -10,6 +10,8 @@ export default function ProfilePage() {
   const [contactsVisible, setContactsVisible] = useState(false);
   const [socialVisible, setSocialVisible] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
+  const [animateTitle, setAnimateTitle] = useState(false);
+  const [animateCard, setAnimateCard] = useState(false);
 
   const fileInputRef = useRef(null);
 
@@ -19,6 +21,14 @@ export default function ProfilePage() {
       if (currentUser?.displayName) setDisplayName(currentUser.displayName);
     });
     return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAnimateTitle(true);
+      setAnimateCard(true);
+    }, 300);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleSave = async () => {
@@ -63,8 +73,19 @@ export default function ProfilePage() {
 
   return (
     <div style={styles.pageWrapper}>
-      <div style={styles.card}>
-        <h2 style={styles.title}>👤 Din profil</h2>
+      <div className={`fade-card ${animateCard ? "animate" : ""}`} style={styles.card}>
+        <h2
+          className={`fade-title ${animateTitle ? "animate" : ""}`}
+          style={{
+            color: "#C8A800",
+            textShadow: "3px 3px 6px rgba(0,0,0,0.8)",
+            fontSize: "3rem",
+            textAlign: "center",
+            marginBottom: "25px"
+          }}
+        >
+          👤 Din profil
+        </h2>
 
         <div style={styles.imageWrapper} onClick={handleImageClick}>
           <img
@@ -149,6 +170,20 @@ export default function ProfilePage() {
           )}
         </div>
       </div>
+
+      {/* --- CSS animation --- */}
+      <style>{`
+        @keyframes fadeSlideDown {
+          0% { opacity: 0; transform: translateY(-20px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-title { opacity: 0; }
+        .fade-title.animate { opacity: 1; animation: fadeSlideDown 1s ease forwards; }
+
+        .fade-card { opacity: 0; transform: translateY(20px); }
+        .fade-card.animate { opacity: 1; transform: translateY(0); animation: fadeSlideDown 1s ease forwards; }
+      `}</style>
     </div>
   );
 }
@@ -159,7 +194,7 @@ const styles = {
     placeItems: "center",
     minHeight: "100vh",
     width: "100%",
-    background: 'url("/5.jpg") no-repeat center center / cover', // 🔹 Ny baggrund
+    background: 'url("/5.jpg") no-repeat center center / cover',
     padding: "20px",
     boxSizing: "border-box",
   },
@@ -174,7 +209,6 @@ const styles = {
     overflowY: "auto",
     maxHeight: "95vh",
   },
-  title: { color: "#C8A800", marginBottom: "25px" },
   imageWrapper: { cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "20px" },
   profileImage: { width: "100px", height: "100px", borderRadius: "50%" },
   changePhoto: { fontSize: "12px", color: "#777", marginTop: "5px" },

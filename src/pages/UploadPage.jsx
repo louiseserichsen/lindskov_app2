@@ -10,8 +10,20 @@ export default function UploadPage() {
   const [uploading, setUploading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [status, setStatus] = useState("");
+  const [animateTitle, setAnimateTitle] = useState(false);
+  const [animateSection, setAnimateSection] = useState(false);
 
-  // Hent eksisterende mapper i Storage
+  // Fade-in animation triggers
+  useEffect(() => {
+    const timer = setTimeout(() => setAnimateTitle(true), 300);
+    const sectionTimer = setTimeout(() => setAnimateSection(true), 500);
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(sectionTimer);
+    };
+  }, []);
+
+  // Hent eksisterende mapper
   useEffect(() => {
     async function fetchFolders() {
       try {
@@ -28,42 +40,26 @@ export default function UploadPage() {
     fetchFolders();
   }, []);
 
-  // Håndtér upload
   const handleUpload = async (e) => {
     e.preventDefault();
     const user = auth.currentUser;
-    if (!user) {
-      setStatus("❌ Du skal være logget ind for at uploade filer");
-      return;
-    }
-    if (!file) {
-      setStatus("❌ Vælg en fil først");
-      return;
-    }
+    if (!user) return setStatus("❌ Du skal være logget ind for at uploade filer");
+    if (!file) return setStatus("❌ Vælg en fil først");
 
     const targetFolder = selectedFolder || folderName;
-    if (!targetFolder) {
-      setStatus("❌ Indtast eller vælg en mappe først");
-      return;
-    }
+    if (!targetFolder) return setStatus("❌ Indtast eller vælg en mappe først");
 
     setUploading(true);
-    const filePath = `userFolders/${user.uid}/${targetFolder}/${file.name}`;
-    const storageRef = ref(storage, filePath);
+    const storageRef = ref(storage, `userFolders/${user.uid}/${targetFolder}/${file.name}`);
 
     try {
       await uploadBytes(storageRef, file);
       const downloadURL = await getDownloadURL(storageRef);
-      setStatus(
-        `✅ Filen "${file.name}" blev uploadet til mappen "${targetFolder}"`
-      );
-      setUploadedFiles((prev) => [
-        ...prev,
-        { name: file.name, url: downloadURL },
-      ]);
+      setUploadedFiles((prev) => [...prev, { name: file.name, url: downloadURL }]);
       if (!availableFolders.includes(targetFolder)) {
         setAvailableFolders((prev) => [...prev, targetFolder]);
       }
+      setStatus(`✅ Filen "${file.name}" blev uploadet til mappen "${targetFolder}"`);
       setFile(null);
       setFolderName("");
     } catch (err) {
@@ -74,7 +70,6 @@ export default function UploadPage() {
     }
   };
 
-  // Hent filer i valgt mappe
   const handleSelectFolder = async (folder) => {
     setSelectedFolder(folder);
     const user = auth.currentUser;
@@ -90,100 +85,127 @@ export default function UploadPage() {
     setUploadedFiles(files);
   };
 
-  // Dynamisk farve på statusmeddelelser
   const getStatusStyle = () => {
-    if (status.includes("❌ Vælg en fil først"))
-      return { ...styles.status, color: "#C00000" };
+    if (status.includes("❌ Vælg en fil først")) return { ...styles.status, color: "#C00000" };
     return styles.status;
   };
 
   return (
     <div style={styles.wrapper}>
-      <h2 style={styles.title}>📁 Upload & administrér filer</h2>
+      {/* Titel med gylden farve og fade-in */}
+      <h2
+        className={`fade-title ${animateTitle ? "animate" : ""}`}
+        style={{
+          color: "#C8A800",
+          textShadow: "2px 2px 6px rgba(0,0,0,0.8)",
+          fontSize: "3rem", // ændret størrelse
+          textAlign: "center",
+          marginBottom: "20px"
+        }}
+      >
+        📁 Upload & Administrér Filer
+      </h2>
 
-      <div style={styles.section}>
-        <h3>🗂️ Opret eller vælg mappe</h3>
-        <div style={styles.folderControls}>
-          <input
-            type="text"
-            placeholder="Ny mappe (fx 'ProjektA')"
-            value={folderName}
-            onChange={(e) => setFolderName(e.target.value)}
-            style={styles.input}
-          />
-          <button
-            style={styles.button}
-            onClick={() => {
-              if (folderName && !availableFolders.includes(folderName)) {
-                setAvailableFolders([...availableFolders, folderName]);
-                setSelectedFolder(folderName);
-                setFolderName("");
-              }
-            }}
-          >
-            ➕ Opret mappe
-          </button>
+      <div className={`fade-section ${animateSection ? "animate" : ""}`}>
+        {/* Opret/Vælg mappe */}
+        <div style={styles.section}>
+          <h3>🗂️ Opret eller vælg mappe</h3>
+          <div style={styles.folderControls}>
+            <input
+              type="text"
+              placeholder="Ny mappe (fx 'ProjektA')"
+              value={folderName}
+              onChange={(e) => setFolderName(e.target.value)}
+              style={styles.input}
+            />
+            <button
+              style={styles.button}
+              onClick={() => {
+                if (folderName && !availableFolders.includes(folderName)) {
+                  setAvailableFolders([...availableFolders, folderName]);
+                  setSelectedFolder(folderName);
+                  setFolderName("");
+                }
+              }}
+            >
+              ➕ Opret mappe
+            </button>
+          </div>
+
+          {availableFolders.length > 0 && (
+            <div style={styles.folderList}>
+              {availableFolders.map((folder) => (
+                <button
+                  key={folder}
+                  style={selectedFolder === folder ? styles.activeFolder : styles.folderButton}
+                  onClick={() => handleSelectFolder(folder)}
+                >
+                  📂 {folder}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {availableFolders.length > 0 && (
-          <div style={styles.folderList}>
-            {availableFolders.map((folder) => (
-              <button
-                key={folder}
-                style={
-                  selectedFolder === folder
-                    ? styles.activeFolder
-                    : styles.folderButton
-                }
-                onClick={() => handleSelectFolder(folder)}
-              >
-                📂 {folder}
-              </button>
-            ))}
+        {/* Upload fil */}
+        <div style={styles.section}>
+          <h3>⬆️ Upload fil til valgt mappe</h3>
+          <form onSubmit={handleUpload} style={styles.uploadForm}>
+            <input
+              type="file"
+              onChange={(e) => setFile(e.target.files[0])}
+              style={styles.fileInput}
+            />
+            <button type="submit" style={styles.button} disabled={uploading}>
+              {uploading ? "Uploader..." : "Upload"}
+            </button>
+          </form>
+          {status && <p style={getStatusStyle()}>{status}</p>}
+        </div>
+
+        {/* Uploadede filer */}
+        {uploadedFiles.length > 0 && (
+          <div style={styles.section}>
+            <h3>📜 Filer i mappen: {selectedFolder}</h3>
+            <ul style={styles.fileList}>
+              {uploadedFiles.map((file, idx) => (
+                <li key={idx}>
+                  <a href={file.url} target="_blank" rel="noreferrer" style={{ color: "#000", textDecoration: "none" }}>
+                    {file.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </div>
 
-      <div style={styles.section}>
-        <h3>⬆️ Upload fil til valgt mappe</h3>
-        <form onSubmit={handleUpload} style={styles.uploadForm}>
-          <input
-            type="file"
-            onChange={(e) => setFile(e.target.files[0])}
-            style={styles.fileInput}
-          />
-          <button type="submit" style={styles.button} disabled={uploading}>
-            {uploading ? "Uploader..." : "Upload"}
-          </button>
-        </form>
-        {status && <p style={getStatusStyle()}>{status}</p>}
-      </div>
+      {/* --- CSS animation --- */}
+      <style>{`
+        @keyframes fadeSlideDown {
+          0% { opacity: 0; transform: translateY(-20px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
 
-      {uploadedFiles.length > 0 && (
-        <div style={styles.section}>
-          <p style={styles.sharedToText}>
-            Her vises filer du har delt til: kunde1
-          </p>
-          <p style={styles.sharedFromText}>
-            Her vises filer delt med dig fra: kunde1
-          </p>
-          <h3>📜 Filer i mappen: {selectedFolder}</h3>
-          <ul style={styles.fileList}>
-            {uploadedFiles.map((file, idx) => (
-              <li key={idx}>
-                <a
-                  href={file.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ color: "#000", textDecoration: "none" }}
-                >
-                  {file.name}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+        .fade-title {
+          opacity: 0;
+          text-align: center;
+        }
+
+        .fade-title.animate {
+          opacity: 1;
+          animation: fadeSlideDown 1s ease forwards;
+        }
+
+        .fade-section {
+          opacity: 0;
+        }
+
+        .fade-section.animate {
+          opacity: 1;
+          animation: fadeSlideDown 1s ease forwards;
+        }
+      `}</style>
     </div>
   );
 }
@@ -199,11 +221,6 @@ const styles = {
     gap: "30px",
     color: "#000",
   },
-  title: { 
-    fontSize: "26px", 
-    fontWeight: "bold", 
-    color: "#C8A800" // 🔹 gylden farve som knapperne
-  },
   section: {
     backgroundColor: "rgba(255, 255, 255, 0.95)",
     padding: "20px",
@@ -212,6 +229,7 @@ const styles = {
     width: "100%",
     maxWidth: "600px",
     color: "#000",
+    marginBottom: "20px",
   },
   folderControls: { display: "flex", gap: "10px", marginBottom: "10px" },
   input: {
@@ -256,6 +274,4 @@ const styles = {
   fileInput: { cursor: "pointer", color: "#000" },
   status: { marginTop: "10px", fontWeight: "bold", color: "#000" },
   fileList: { marginTop: "10px", listStyle: "none", paddingLeft: 0, color: "#000" },
-  sharedToText: { color: "#006400", fontWeight: "bold", marginTop: "10px" },
-  sharedFromText: { color: "#003366", fontWeight: "bold", marginTop: "5px" },
 };

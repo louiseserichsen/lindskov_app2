@@ -1,3 +1,4 @@
+// src/pages/EventsPage.jsx
 import React, { useEffect, useState } from "react";
 import { auth } from "../firebase";
 import { Link, Navigate } from "react-router-dom";
@@ -11,6 +12,9 @@ export default function EventsPage() {
     { id: 2, title: "Workshop: Marketing", date: "2025-12-05", joined: true },
     { id: 3, title: "Tech Conference", date: "2025-12-15", joined: false },
   ]);
+  const [animateTitle, setAnimateTitle] = useState(false);
+  const [animateCard, setAnimateCard] = useState(false);
+  const [animateBoxes, setAnimateBoxes] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -20,13 +24,24 @@ export default function EventsPage() {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    const timer1 = setTimeout(() => setAnimateTitle(true), 300);
+    const timer2 = setTimeout(() => setAnimateCard(true), 500);
+    const timer3 = setTimeout(() => setAnimateBoxes(true), 800);
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+    };
+  }, []);
+
   const handleLogout = () => {
     auth.signOut();
     setDropdownOpen(false);
   };
 
   const toggleJoin = (id) => {
-    setEvents(events.map(e => e.id === id ? { ...e, joined: !e.joined } : e));
+    setEvents(events.map((e) => (e.id === id ? { ...e, joined: !e.joined } : e)));
   };
 
   if (loading) return <p>Loading...</p>;
@@ -35,8 +50,17 @@ export default function EventsPage() {
   return (
     <>
       <nav style={styles.navStyle}>
-        <img src={`${import.meta.env.BASE_URL}lindskovlogo.png`} alt="Logo" style={styles.logoStyle} />
-        <button style={styles.dropdownButton} onClick={() => setDropdownOpen(!dropdownOpen)}>Menu ▾</button>
+        <img
+          src={`${import.meta.env.BASE_URL}lindskovlogo.png`}
+          alt="Logo"
+          style={styles.logoStyle}
+        />
+        <button
+          style={styles.dropdownButton}
+          onClick={() => setDropdownOpen(!dropdownOpen)}
+        >
+          Menu ▾
+        </button>
 
         {dropdownOpen && (
           <div style={styles.dropdownStyle}>
@@ -52,11 +76,27 @@ export default function EventsPage() {
       </nav>
 
       <div style={styles.pageWrapper}>
-        <div style={styles.card}>
-          <h2 style={styles.title}>📅 Kommende events</h2>
+        <div className={`fade-card ${animateCard ? "animate" : ""}`} style={styles.card}>
+          <h2
+            className={`fade-title ${animateTitle ? "animate" : ""}`}
+            style={{
+              color: "#C8A800",
+              textShadow: "3px 3px 6px rgba(0,0,0,0.8)",
+              fontSize: "3rem",
+              marginBottom: "25px",
+              textAlign: "center"
+            }}
+          >
+            📅 Kommende events
+          </h2>
+
           <ul style={styles.list}>
-            {events.map(event => (
-              <li key={event.id} style={styles.listItem}>
+            {events.map((event) => (
+              <li
+                key={event.id}
+                className={`fade-box ${animateBoxes ? "animate" : ""}`}
+                style={styles.listItem}
+              >
                 <div style={styles.eventInfo}>
                   <strong>{event.title}</strong><br />
                   <span>{event.date}</span>
@@ -72,6 +112,31 @@ export default function EventsPage() {
           </ul>
         </div>
       </div>
+
+      <style>{`
+        @keyframes fadeSlideDown {
+          0% { opacity: 0; transform: translateY(-20px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-title { opacity: 0; }
+        .fade-title.animate {
+          opacity: 1;
+          animation: fadeSlideDown 1s ease forwards;
+        }
+
+        .fade-card { opacity: 0; }
+        .fade-card.animate {
+          opacity: 1;
+          animation: fadeSlideDown 1s ease forwards;
+        }
+
+        .fade-box { opacity: 0; }
+        .fade-box.animate {
+          opacity: 1;
+          animation: fadeSlideDown 1s ease forwards;
+        }
+      `}</style>
     </>
   );
 }
@@ -100,15 +165,31 @@ const styles = {
     placeItems: "center", 
     minHeight: "100vh", 
     width: "100%", 
-    background: 'url("/8.jpg") no-repeat center center / cover', // 🔹 Ny baggrund
+    background: 'url("/8.jpg") no-repeat center center / cover',
     paddingTop: "80px", 
     boxSizing: "border-box" 
   },
 
-  card: { background: "#fff", padding: "40px 30px", borderRadius: "16px", boxShadow: "0 4px 12px rgba(0,0,0,0.15)", width: "100%", maxWidth: "500px", textAlign: "center" },
-  title: { color: "#C8A800", marginBottom: "25px" },
+  card: { 
+    background: "#fff", 
+    padding: "40px 30px", 
+    borderRadius: "16px", 
+    boxShadow: "0 4px 12px rgba(0,0,0,0.15)", 
+    width: "100%", 
+    maxWidth: "500px", 
+    textAlign: "center" 
+  },
+
   list: { listStyle: "none", padding: 0, margin: 0 },
-  listItem: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 15px", marginBottom: "10px", backgroundColor: "#f2f2f2", borderRadius: "8px" },
+  listItem: { 
+    display: "flex", 
+    justifyContent: "space-between", 
+    alignItems: "center", 
+    padding: "12px 15px", 
+    marginBottom: "10px", 
+    backgroundColor: "#f2f2f2", 
+    borderRadius: "8px" 
+  },
   eventInfo: { textAlign: "left", color: "#000" },
   joinBtn: { backgroundColor: "#C8A800", color: "#fff", border: "none", borderRadius: "6px", padding: "8px 12px", cursor: "pointer" },
   joinedBtn: { backgroundColor: "#777", color: "#fff", border: "none", borderRadius: "6px", padding: "8px 12px", cursor: "pointer" },
