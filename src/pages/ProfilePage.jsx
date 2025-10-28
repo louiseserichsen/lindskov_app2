@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import { auth } from "../firebase";
 import { updateProfile, onAuthStateChanged } from "firebase/auth";
+import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+
+const db = getFirestore();
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
@@ -13,16 +16,35 @@ export default function ProfilePage() {
   const [animateTitle, setAnimateTitle] = useState(false);
   const [animateCard, setAnimateCard] = useState(false);
 
+  const [contacts, setContacts] = useState([]);
+  const [newContact, setNewContact] = useState({ name: "", email: "", phone: "" });
+
   const fileInputRef = useRef(null);
 
+  // --- Hent bruger og kontakter fra Firestore ---
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser?.displayName) setDisplayName(currentUser.displayName);
+
+      if (currentUser) {
+        const docRef = doc(db, "users", currentUser.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setContacts(data.contacts || []);
+        } else {
+          // Opret dokument med tom kontaktliste, hvis ikke eksisterer
+          await setDoc(docRef, { contacts: [] });
+          setContacts([]);
+        }
+      }
     });
     return () => unsubscribe();
   }, []);
 
+  // --- Animation ---
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimateTitle(true);
@@ -31,6 +53,7 @@ export default function ProfilePage() {
     return () => clearTimeout(timer);
   }, []);
 
+  // --- Gem profilnavn ---
   const handleSave = async () => {
     if (!displayName.trim()) {
       setStatus("❌ Indtast et navn før du gemmer.");
@@ -47,6 +70,7 @@ export default function ProfilePage() {
     }
   };
 
+  // --- Håndter profilbillede ---
   const handleImageClick = () => fileInputRef.current.click();
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -57,11 +81,28 @@ export default function ProfilePage() {
     setStatus("✅ Billede valgt (ikke gemt online)");
   };
 
-  const contacts = [
-    { name: "Mickey Mouse", phone: "01 23 45 67", email: "mickey@disney.com" },
-    { name: "Minni Mouse", phone: "89 01 23 45", email: "minni@disney.com" },
-    { name: "Anders And", phone: "12 34 56 78", email: "anders@lindskov.dk" },
-  ];
+  // --- Tilføj kontakt ---
+  const handleAddContact = async () => {
+    if (!newContact.name.trim() || !newContact.email.trim() || !newContact.phone.trim()) {
+      setStatus("❌ Udfyld alle felter for kontakten.");
+      return;
+    }
+    const updatedContacts = [...contacts, newContact];
+    setContacts(updatedContacts);
+    setNewContact({ name: "", email: "", phone: "" });
+    setStatus("✅ Kontakt tilføjet!");
+
+    await setDoc(doc(db, "users", user.uid), { contacts: updatedContacts }, { merge: true });
+  };
+
+  // --- Slet kontakt ---
+  const handleDeleteContact = async (index) => {
+    const updatedContacts = contacts.filter((_, i) => i !== index);
+    setContacts(updatedContacts);
+    setStatus("✅ Kontakt slettet!");
+
+    await setDoc(doc(db, "users", user.uid), { contacts: updatedContacts }, { merge: true });
+  };
 
   const socialLinks = [
     { platform: "Facebook", url: "https://facebook.com", color: "#1877F2" },
@@ -130,25 +171,64 @@ export default function ProfilePage() {
 
         {status && <p style={{ ...styles.status, color: "#000" }}>{status}</p>}
 
+        {/* --- Kontakter --- */}
         <div style={styles.section}>
           <button style={styles.toggleBtn} onClick={() => setContactsVisible(!contactsVisible)}>
             {contactsVisible ? "Skjul kontakter" : "Vis gemte kontakter"}
           </button>
           {contactsVisible && (
-            <ul style={styles.list}>
-              {contacts.map((c, i) => (
-                <li key={i} style={styles.listItem}>
-                  <span style={styles.text}>
-                    <strong>{c.name}</strong><br/>
-                    📞 {c.phone}<br/>
-                    ✉️ {c.email}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            <div style={{ marginTop: "15px" }}>
+              <ul style={styles.list}>
+                {contacts.map((c, i) => (
+                  <li key={i} style={{ ...styles.listItem, color: "#000" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <div>
+                        <strong>{c.name}</strong><br/>
+                        📞 {c.phone}<br/>
+                        ✉️ {c.email}
+                      </div>
+                      <button
+                        style={styles.deleteBtn}
+                        onClick={() => handleDeleteContact(i)}
+                      >
+                        ✖
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              <div style={{ marginTop: "15px" }}>
+                <input
+                  style={styles.input}
+                  type="text"
+                  placeholder="Navn"
+                  value={newContact.name}
+                  onChange={(e) => setNewContact({ ...newContact, name: e.target.value })}
+                />
+                <input
+                  style={styles.input}
+                  type="email"
+                  placeholder="Email"
+                  value={newContact.email}
+                  onChange={(e) => setNewContact({ ...newContact, email: e.target.value })}
+                />
+                <input
+                  style={styles.input}
+                  type="tel"
+                  placeholder="Telefonnummer"
+                  value={newContact.phone}
+                  onChange={(e) => setNewContact({ ...newContact, phone: e.target.value })}
+                />
+                <button style={{ ...styles.saveBtn, marginTop: "10px" }} onClick={handleAddContact}>
+                  Tilføj kontakt
+                </button>
+              </div>
+            </div>
           )}
         </div>
 
+        {/* --- Social links --- */}
         <div style={styles.section}>
           <button style={styles.toggleBtn} onClick={() => setSocialVisible(!socialVisible)}>
             {socialVisible ? "Skjul SoMe-links" : "Vis SoMe-links"}
@@ -171,16 +251,13 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* --- CSS animation --- */}
       <style>{`
         @keyframes fadeSlideDown {
           0% { opacity: 0; transform: translateY(-20px); }
           100% { opacity: 1; transform: translateY(0); }
         }
-
         .fade-title { opacity: 0; }
         .fade-title.animate { opacity: 1; animation: fadeSlideDown 1s ease forwards; }
-
         .fade-card { opacity: 0; transform: translateY(20px); }
         .fade-card.animate { opacity: 1; transform: translateY(0); animation: fadeSlideDown 1s ease forwards; }
       `}</style>
@@ -189,26 +266,8 @@ export default function ProfilePage() {
 }
 
 const styles = {
-  pageWrapper: {
-    display: "grid",
-    placeItems: "center",
-    minHeight: "100vh",
-    width: "100%",
-    background: 'url("/5.jpg") no-repeat center center / cover',
-    padding: "20px",
-    boxSizing: "border-box",
-  },
-  card: {
-    background: "#fff",
-    padding: "40px 30px",
-    borderRadius: "16px",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-    width: "100%",
-    maxWidth: "500px",
-    textAlign: "center",
-    overflowY: "auto",
-    maxHeight: "95vh",
-  },
+  pageWrapper: { display: "grid", placeItems: "center", minHeight: "100vh", width: "100%", background: 'url("/5.jpg") no-repeat center center / cover', padding: "20px", boxSizing: "border-box" },
+  card: { background: "#fff", padding: "40px 30px", borderRadius: "16px", boxShadow: "0 4px 12px rgba(0,0,0,0.15)", width: "100%", maxWidth: "500px", textAlign: "center", overflowY: "auto", maxHeight: "95vh" },
   imageWrapper: { cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "20px" },
   profileImage: { width: "100px", height: "100px", borderRadius: "50%" },
   changePhoto: { fontSize: "12px", color: "#777", marginTop: "5px" },
@@ -219,11 +278,12 @@ const styles = {
   saveBtn: { background: "#C8A800", color: "#fff", border: "none", borderRadius: "6px", padding: "8px 12px" },
   cancelBtn: { background: "#777", color: "#fff", border: "none", borderRadius: "6px", padding: "8px 12px" },
   editBtn: { background: "#C8A800", color: "#fff", border: "none", borderRadius: "6px", padding: "10px 16px", marginTop: "10px" },
+  deleteBtn: { background: "transparent", border: "none", color: "#ff4d4d", fontSize: "16px", cursor: "pointer" },
   status: { marginTop: "10px", fontWeight: "bold" },
   section: { marginTop: "25px", textAlign: "center" },
   toggleBtn: { background: "#333", color: "#fff", border: "none", borderRadius: "6px", padding: "8px 12px" },
   list: { listStyle: "none", padding: 0, margin: "10px auto", textAlign: "center" },
-  listItem: { background: "#f2f2f2", borderRadius: "8px", padding: "12px", marginBottom: "8px" },
+  listItem: { background: "#f2f2f2", borderRadius: "8px", padding: "12px", marginBottom: "8px", color: "#000" },
   socialContainer: { display: "flex", justifyContent: "center", gap: "10px", flexWrap: "wrap" },
   socialLink: { color: "#fff", textDecoration: "none", padding: "8px 10px", borderRadius: "6px" },
   loading: { textAlign: "center", marginTop: "50px", color: "#000" },

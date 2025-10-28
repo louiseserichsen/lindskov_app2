@@ -64,12 +64,14 @@ export default function EventsPage() {
 
         {dropdownOpen && (
           <div style={styles.dropdownStyle}>
-            <Link to="/" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Home</Link>
-            <Link to="/profile" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Profil</Link>
-            <Link to="/upload" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Filer</Link>
-            <Link to="/files" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Delte filer</Link>
-            <Link to="/help" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>FAQ</Link>
-            <Link to="/events" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Tilmelding</Link>
+            <div style={styles.linksContainer}>
+              <Link to="/" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Hjem</Link>
+              <Link to="/profile" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Profil</Link>
+              <Link to="/upload" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Filer</Link>
+              <Link to="/files" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Delte filer</Link>
+              <Link to="/events" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Begivenheder</Link>
+              <Link to="/help" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>FAQ</Link>
+            </div>
             <button style={styles.logoutBtn} onClick={handleLogout}>Log ud</button>
           </div>
         )}
@@ -87,7 +89,7 @@ export default function EventsPage() {
               textAlign: "center"
             }}
           >
-            📅 Kommende events
+            📅 Tilmelding
           </h2>
 
           <ul style={styles.list}>
@@ -156,9 +158,22 @@ const styles = {
   },
   logoStyle: { height: "50px", width: "auto", marginRight: "30px", borderRadius: "8px" },
   dropdownButton: { backgroundColor: "#C8A800", color: "#fff", border: "none", borderRadius: 4, padding: "8px 14px", cursor: "pointer", fontWeight: "bold" },
-  dropdownStyle: { position: "absolute", left: 120, top: 55, backgroundColor: "#fff", border: "1px solid #ccc", borderRadius: 6, boxShadow: "0 2px 8px rgba(0,0,0,0.2)", zIndex: 1000, padding: 10, display: "flex", flexDirection: "column" },
+  dropdownStyle: { 
+    position: "absolute", 
+    left: 120, 
+    top: 55, 
+    backgroundColor: "#fff", 
+    border: "1px solid #ccc", 
+    borderRadius: 6, 
+    boxShadow: "0 2px 8px rgba(0,0,0,0.2)", 
+    zIndex: 1000, 
+    padding: 10, 
+    display: "flex", 
+    flexDirection: "column" 
+  },
+  linksContainer: { display: "flex", flexDirection: "column", flexGrow: 1 },
   linkStyle: { color: "#C8A800", textDecoration: "none", margin: "6px 0", fontWeight: "bold" },
-  logoutBtn: { display: "block", background: "none", border: "none", padding: 8, width: "100%", textAlign: "left", color: "#C8A800", cursor: "pointer", fontWeight: "bold" },
+  logoutBtn: { display: "block", background: "none", border: "none", padding: 8, width: "100%", textAlign: "left", color: "#C8A800", cursor: "pointer", fontWeight: "bold", marginTop: "auto" },
 
   pageWrapper: { 
     display: "grid", 

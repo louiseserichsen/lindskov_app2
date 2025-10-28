@@ -17,7 +17,7 @@ export default function FilesPage() {
 
   useEffect(() => {
     const timer1 = setTimeout(() => setAnimateTitle(true), 300);
-    const timer2 = setTimeout(() => setAnimateContent(true), 600); // content efter titel
+    const timer2 = setTimeout(() => setAnimateContent(true), 600);
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
@@ -75,10 +75,8 @@ export default function FilesPage() {
   return (
     <div style={styles.pageWrapper}>
       <div style={styles.wrapper}>
-        {/* Titel med egen fade-in */}
         <h2 className={`fade-title ${animateTitle ? "animate" : ""}`}>📂 Delte filer</h2>
 
-        {/* Hele indholdsboksen med fade-in */}
         <div className={`fade-content ${animateContent ? "animate" : ""}`} style={{ width: "100%" }}>
           <div style={{ ...styles.uploadSection, gap: "10px" }}>
             <label style={styles.uploadBtn}>
@@ -147,7 +145,6 @@ export default function FilesPage() {
           </div>
         </div>
 
-        {/* --- CSS animation --- */}
         <style>{`
           @keyframes fadeSlideDown {
             0% { opacity: 0; transform: translateY(-20px); }
@@ -186,10 +183,12 @@ export default function FilesPage() {
 const styles = {
   pageWrapper: {
     minHeight: "100vh",
-    display: "grid",
-    placeItems: "center",
+    display: "flex",        // Skiftet fra grid til flex
+    flexDirection: "column", 
+    alignItems: "center",   // Centrerer horisontalt
     background: 'url("/11.jpg") no-repeat center center / cover',
     padding: "20px",
+    marginTop: 0,
   },
   wrapper: {
     display: "flex",
@@ -198,10 +197,11 @@ const styles = {
     gap: "30px",
     width: "100%",
     maxWidth: "900px",
+    marginTop: "60px", // Tilpas til navbar højde
   },
   row: {
     display: "flex",
-    justifyContent: "center",
+    justifyContent: "center", // Centrerer bokse horisontalt
     alignItems: "flex-start",
     gap: "20px",
     flexWrap: "wrap",
@@ -210,7 +210,7 @@ const styles = {
   uploadSection: { 
     display: "flex", 
     alignItems: "center", 
-    justifyContent: "center", // <-- centreret knapper
+    justifyContent: "center", 
   },
   uploadBtn: {
     backgroundColor: "#C8A800",
