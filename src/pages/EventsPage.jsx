@@ -66,10 +66,12 @@ export default function EventsPage() {
           <div style={styles.dropdownStyle}>
             <div style={styles.linksContainer}>
               <Link to="/" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Hjem</Link>
+              <Link to="/nyheder" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Nyheder</Link>
               <Link to="/profile" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Profil</Link>
               <Link to="/upload" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Filer</Link>
               <Link to="/files" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Delte filer</Link>
               <Link to="/events" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Begivenheder</Link>
+              <Link to="/tasks" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Opgaver</Link> {/* 👈 tilføjet */}
               <Link to="/help" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>FAQ</Link>
             </div>
             <button style={styles.logoutBtn} onClick={handleLogout}>Log ud</button>

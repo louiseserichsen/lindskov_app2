@@ -6,14 +6,12 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 export default function FilesPage() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState("");
-  const [activeSender, setActiveSender] = useState("kunde1");
-  const [activeReceiver, setActiveReceiver] = useState("kunde1");
   const [sentFiles, setSentFiles] = useState([]);
   const [receivedFiles, setReceivedFiles] = useState([]);
   const [animateTitle, setAnimateTitle] = useState(false);
   const [animateContent, setAnimateContent] = useState(false);
 
-  const customers = ["kunde1", "kunde2", "kunde3"];
+  const customerName = "Lindskov";
 
   useEffect(() => {
     const timer1 = setTimeout(() => setAnimateTitle(true), 300);
@@ -53,11 +51,11 @@ export default function FilesPage() {
         fileName: selectedFile.name,
         fileURL: downloadURL,
         createdAt: serverTimestamp(),
-        customer: activeSender,
+        customer: customerName,
       });
 
       setUploadStatus(`✅ Fil "${selectedFile.name}" uploaded!`);
-      setSentFiles((prev) => [...prev, { name: selectedFile.name, customer: activeSender }]);
+      setSentFiles((prev) => [...prev, { name: selectedFile.name, customer: customerName }]);
       setSelectedFile(null);
     } catch (error) {
       console.error(error);
@@ -94,26 +92,16 @@ export default function FilesPage() {
             <div style={styles.box}>
               <h3 style={styles.boxTitle}>Filer delt af dig</h3>
               <div style={styles.customerTabs}>
-                {customers.map((cust) => (
-                  <button
-                    key={cust}
-                    onClick={() => setActiveSender(cust)}
-                    style={activeSender === cust ? styles.activeTab : styles.tab}
-                  >
-                    {cust.toUpperCase()}
-                  </button>
-                ))}
+                <button style={styles.activeTab}>{customerName.toUpperCase()}</button>
               </div>
               <div style={styles.filesList}>
                 <p style={styles.goldText}>
-                  Her vises filer du har delt til: <strong>{activeSender}</strong>
+                  Her vises filer du har delt til: <strong>{customerName}</strong>
                 </p>
                 <ul>
-                  {sentFiles
-                    .filter((f) => f.customer === activeSender)
-                    .map((file, index) => (
-                      <li key={index}>{file.name}</li>
-                    ))}
+                  {sentFiles.map((file, index) => (
+                    <li key={index}>{file.name}</li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -121,19 +109,11 @@ export default function FilesPage() {
             <div style={styles.box}>
               <h3 style={styles.boxTitle}>Filer delt med dig</h3>
               <div style={styles.customerTabs}>
-                {customers.map((cust) => (
-                  <button
-                    key={cust}
-                    onClick={() => setActiveReceiver(cust)}
-                    style={activeReceiver === cust ? styles.activeTab : styles.tab}
-                  >
-                    {cust.toUpperCase()}
-                  </button>
-                ))}
+                <button style={styles.activeTab}>{customerName.toUpperCase()}</button>
               </div>
               <div style={styles.filesList}>
                 <p style={styles.goldText}>
-                  Her vises filer delt med dig fra: <strong>{activeReceiver}</strong>
+                  Her vises filer delt med dig fra: <strong>{customerName}</strong>
                 </p>
                 <ul>
                   {receivedFiles.map((file, index) => (
@@ -183,9 +163,9 @@ export default function FilesPage() {
 const styles = {
   pageWrapper: {
     minHeight: "100vh",
-    display: "flex",        // Skiftet fra grid til flex
-    flexDirection: "column", 
-    alignItems: "center",   // Centrerer horisontalt
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
     background: 'url("/11.jpg") no-repeat center center / cover',
     padding: "20px",
     marginTop: 0,
@@ -197,11 +177,11 @@ const styles = {
     gap: "30px",
     width: "100%",
     maxWidth: "900px",
-    marginTop: "60px", // Tilpas til navbar højde
+    marginTop: "60px",
   },
   row: {
     display: "flex",
-    justifyContent: "center", // Centrerer bokse horisontalt
+    justifyContent: "center",
     alignItems: "flex-start",
     gap: "20px",
     flexWrap: "wrap",
@@ -240,22 +220,14 @@ const styles = {
     borderBottom: "2px solid #C8A800",
     paddingBottom: "8px",
   },
-  customerTabs: { display: "flex", gap: "10px", marginBottom: "10px" },
-  tab: {
-    backgroundColor: "#eee",
-    border: "none",
-    padding: "8px 12px",
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontWeight: "bold",
-  },
+  customerTabs: { display: "flex", justifyContent: "center", marginBottom: "10px" },
   activeTab: {
     backgroundColor: "#C8A800",
     color: "#fff",
     border: "none",
     padding: "8px 12px",
     borderRadius: "6px",
-    cursor: "pointer",
+    cursor: "default",
     fontWeight: "bold",
   },
   filesList: { textAlign: "center" },

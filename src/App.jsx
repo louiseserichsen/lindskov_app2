@@ -13,6 +13,7 @@ import FilesPage from "./pages/FilesPage.jsx";
 import HelpPage from "./pages/HelpPage.jsx";
 import EventsPage from "./pages/EventsPage.jsx";
 import Nyheder from "./pages/Nyheder.jsx";
+import Tasks from "./pages/Tasks.jsx"; // 👈 Tasks import
 
 function App() {
   const [user, setUser] = useState(null);
@@ -127,6 +128,7 @@ function App() {
                   <Link to="/upload" style={linkStyle} onClick={() => setDropdownOpen(false)}>Filer</Link>
                   <Link to="/files" style={linkStyle} onClick={() => setDropdownOpen(false)}>Delte filer</Link>
                   <Link to="/events" style={linkStyle} onClick={() => setDropdownOpen(false)}>Begivenheder</Link>
+                  <Link to="/tasks" style={linkStyle} onClick={() => setDropdownOpen(false)}>Opgaver</Link> {/* 👈 Tasks link */}
                   <Link to="/help" style={linkStyle} onClick={() => setDropdownOpen(false)}>FAQ</Link>
                 </>
               )}
@@ -148,6 +150,7 @@ function App() {
           <Route path="/files" element={user ? <FilesPage /> : <Navigate to="/login" />} />
           <Route path="/help" element={<HelpPage />} />
           <Route path="/events" element={user ? <EventsPage /> : <Navigate to="/login" />} />
+          <Route path="/tasks" element={user ? <Tasks /> : <Navigate to="/login" />} /> {/* 👈 Tasks route */}
           <Route path="*" element={<p>Page not found</p>} />
         </Routes>
       </div>
