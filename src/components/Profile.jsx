@@ -17,14 +17,11 @@ export default function ProfilePage() {
 
   const fileInputRef = useRef(null);
 
-  // Lyt til auth changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
         setDisplayName(currentUser.displayName || "");
-
-        // Hent Firestore-data
         const docRef = doc(db, "users", currentUser.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
@@ -36,7 +33,6 @@ export default function ProfilePage() {
     return () => unsubscribe();
   }, []);
 
-  // Gem displayName i Auth
   const handleSaveName = async () => {
     if (!displayName.trim()) {
       setStatus("❌ Indtast et navn før du gemmer.");
@@ -47,7 +43,6 @@ export default function ProfilePage() {
       setStatus("✅ Profil opdateret!");
       setIsEditing(false);
       setUser({ ...auth.currentUser });
-      // Opdater Firestore også
       await setDoc(doc(db, "users", auth.currentUser.uid), { name: displayName }, { merge: true });
     } catch (error) {
       console.error(error);
@@ -55,7 +50,6 @@ export default function ProfilePage() {
     }
   };
 
-  // Håndtering af profilbillede
   const handleImageClick = () => fileInputRef.current.click();
   const handleFileChange = (e) => {
     if (e.target.files[0]) setFile(e.target.files[0]);
@@ -66,7 +60,6 @@ export default function ProfilePage() {
     await uploadBytes(storageRef, file);
     const url = await getDownloadURL(storageRef);
     setProfileUrl(url);
-    // Gem URL i Firestore
     await setDoc(doc(db, "users", user.uid), { profileUrl: url }, { merge: true });
     setStatus("✅ Profilbillede opdateret!");
   };
@@ -170,10 +163,10 @@ const styles = {
     alignItems: "center",
     minHeight: "100vh",
     width: "100%",
-    background: "linear-gradient(135deg, #f9f9f9, #e6e6e6)",
     flexDirection: "column",
     boxSizing: "border-box",
     padding: "20px",
+    background: 'url("/13.jpg") no-repeat center center / cover', // <-- baggrundsbilledet
   },
   card: {
     backgroundColor: "#fff",

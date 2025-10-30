@@ -6,7 +6,7 @@ export default function Tasks() {
     { id: 1, title: "Årshjul 2025", progress: 80 },
     { id: 2, title: "Upload af dokumenter", progress: 50 },
     { id: 3, title: "Godkendelse af kontrakt", progress: 20 },
-    { id: 4, title: "Feedback fra kunde", progress: 60 },
+    { id: 4, title: "Content Plan", progress: 60 },
   ]);
 
   const [animateTitle, setAnimateTitle] = useState(false);
@@ -46,11 +46,14 @@ export default function Tasks() {
             textShadow: "3px 3px 6px rgba(0,0,0,0.8)",
             fontSize: "3rem",
             textAlign: "center",
-            marginBottom: "25px"
+            marginBottom: "10px"
           }}
         >
-          📋 Opgaver
+          Opgaver & Aftaler
         </h2>
+        <p style={{ marginBottom: "25px", color: "#333", fontSize: "1rem" }}>
+          Her kan du se hvor langt Lindskov er med de opgaver og aftaler i har indgået.
+        </p>
 
         {tasks.map((task) => (
           <div key={task.id} style={{ marginBottom: "20px" }}>
@@ -83,7 +86,7 @@ const styles = {
     placeItems: "center",
     minHeight: "100vh",
     width: "100%",
-    background: 'url("/5.jpg") no-repeat center center / cover',
+    background: 'url("/13.jpg") no-repeat center center / cover', // <-- opdateret baggrund
     padding: "20px",
     boxSizing: "border-box",
   },

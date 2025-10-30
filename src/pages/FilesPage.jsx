@@ -76,7 +76,8 @@ export default function FilesPage() {
         <h2 className={`fade-title ${animateTitle ? "animate" : ""}`}>📂 Delte filer</h2>
 
         <div className={`fade-content ${animateContent ? "animate" : ""}`} style={{ width: "100%" }}>
-          <div style={{ ...styles.uploadSection, gap: "10px" }}>
+          {/* Centreret upload sektion */}
+          <div style={styles.uploadWrapper}>
             <label style={styles.uploadBtn}>
               Vælg fil
               <input type="file" onChange={handleFileChange} style={{ display: "none" }} />
@@ -84,9 +85,8 @@ export default function FilesPage() {
             <button style={styles.uploadBtn} onClick={handleUpload}>
               Upload
             </button>
+            {uploadStatus && <p style={getStatusStyle(uploadStatus)}>{uploadStatus}</p>}
           </div>
-
-          {uploadStatus && <p style={getStatusStyle(uploadStatus)}>{uploadStatus}</p>}
 
           <div style={styles.row}>
             <div style={styles.box}>
@@ -187,10 +187,12 @@ const styles = {
     flexWrap: "wrap",
     width: "100%",
   },
-  uploadSection: { 
-    display: "flex", 
-    alignItems: "center", 
-    justifyContent: "center", 
+  uploadWrapper: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    marginBottom: "30px",
+    gap: "10px",
   },
   uploadBtn: {
     backgroundColor: "#C8A800",

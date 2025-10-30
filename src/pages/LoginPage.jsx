@@ -47,7 +47,13 @@ function LoginPage() {
   return (
     <div className="login-banner">
       <div className="login-content">
-        <h2 className={`fade-title ${animateTitle ? "animate" : ""}`}>
+        <h1 className={`fade-title ${animateTitle ? "animate" : ""}`} style={{ marginBottom: "15px" }}>
+          Lindskov Kundeapp
+        </h1>
+        <h2
+          className={`fade-title ${animateTitle ? "animate" : ""}`}
+          style={{ fontSize: "2rem", marginBottom: "20px" }} // Mindre skrift og lidt afstand
+        >
           Login eller opret bruger
         </h2>
 
@@ -85,7 +91,6 @@ function LoginPage() {
             </Link>
           </div>
 
-          {/* FAQ og LinkedIn ved siden af hinanden */}
           <div className="logo-wrapper">
             <Link to="/help" className="faq-btn">FAQ</Link>
             <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">
@@ -126,7 +131,6 @@ function LoginPage() {
           color: #C8A800;
           text-shadow: 3px 3px 6px rgba(0,0,0,0.8);
           opacity: 0;
-          margin-bottom: 20px;
           width: 100%;
           text-align: center;
         }
