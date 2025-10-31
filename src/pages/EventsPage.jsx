@@ -91,7 +91,7 @@ export default function EventsPage() {
               textAlign: "center"
             }}
           >
-            📅 Tilmelding
+          Tilmelding
           </h2>
 
           <ul style={styles.list}>

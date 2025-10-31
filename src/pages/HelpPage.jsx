@@ -1,3 +1,4 @@
+// src/pages/HelpPage.jsx
 import React, { useState, useEffect } from "react";
 
 export default function HelpPage() {
@@ -9,18 +10,17 @@ export default function HelpPage() {
     { question: "Hvad kan jeg bruge min konto til på Lindskov Appen?", answer: "Du kan uploade, dele og tilmelde dig events, samt følge nyheder." },
     { question: "Jeg har glemt min adgangskode – hvad gør jeg?", answer: "Tryk på 'Glemt adgangskode' på login-siden og følg vejledningen." },
     { question: "Hvordan ændrer jeg mine profiloplysninger?", answer: "Gå til 'Min profil' og klik på 'Rediger' for at ændre oplysninger." },
-    { question: "Hvordan uploader og deler jeg filer?", answer: "Under FILER kan du uploade dokumenter og dele med andre brugere." },
+    { question: "Hvordan uploader og deler jeg filer?", answer: "Under DELTE FILER kan du uploade dokumenter og dele med andre brugere.<br />Under FILER kan du opbevare dine egne filer til senere brug." },
     { question: "Hvordan kontakter jeg support?", answer: "Kontakt os via supportformularen eller mail på support@lindskovapp.dk." },
   ];
 
   useEffect(() => {
     const timer = setTimeout(() => setAnimateTitle(true), 300);
 
-    // fade-in for FAQ boxes med staggered effect
     faqItems.forEach((_, i) => {
       setTimeout(() => {
         setAnimateBoxes(prev => [...prev, i]);
-      }, 500 + i * 200); // starter efter 500ms og med 200ms mellem hver
+      }, 500 + i * 200);
     });
 
     return () => clearTimeout(timer);
@@ -41,7 +41,10 @@ export default function HelpPage() {
             onClick={() => toggleBox(i)}
           >
             <h3>{item.question}</h3>
-            <p className={`help-answer ${openIndex === i ? "visible" : "hidden"}`}>{item.answer}</p>
+            <p
+              className={`help-answer ${openIndex === i ? "visible" : "hidden"}`}
+              dangerouslySetInnerHTML={{ __html: item.answer }}
+            />
           </div>
         ))}
       </div>
@@ -120,8 +123,8 @@ export default function HelpPage() {
         .help-box h3 { margin: 0; color: #C8A800; position: relative; text-align: center; }
         .help-box h3::after { content: "›"; position: absolute; right: 10px; top: 50%; transform: translateY(-50%) rotate(90deg); transition: transform 0.3s ease; }
         .help-box.open h3::after { transform: translateY(-50%) rotate(-90deg); }
-        .help-answer { max-height: 0; overflow: hidden; opacity: 0; transition: all 0.4s ease; }
-        .help-answer.visible { max-height: 300px; opacity: 1; margin-top: 15px; }
+        .help-answer { max-height: 0; overflow: hidden; opacity: 0; transition: all 0.4s ease; text-align: center; }
+        .help-answer.visible { max-height: 300px; opacity: 1; margin-top: 15px; text-align: center; }
 
         @media (max-width: 768px) {
           .help-title { font-size: 2.2rem; }

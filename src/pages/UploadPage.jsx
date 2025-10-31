@@ -103,7 +103,7 @@ export default function UploadPage() {
           marginBottom: "20px"
         }}
       >
-        📁 Upload & Administrér Filer
+        Upload & Administrér Filer
       </h2>
 
       <div className={`fade-section ${animateSection ? "animate" : ""}`}>

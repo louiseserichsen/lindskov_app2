@@ -46,7 +46,7 @@ export default function Tasks() {
             textShadow: "3px 3px 6px rgba(0,0,0,0.8)",
             fontSize: "3rem",
             textAlign: "center",
-            marginBottom: "10px"
+            marginBottom: "10px",
           }}
         >
           Opgaver & Aftaler
@@ -64,6 +64,11 @@ export default function Tasks() {
             <p style={{ margin: 0 }}>{task.progress}% færdig</p>
           </div>
         ))}
+
+        {/* Knappen under indholdsboksen */}
+        <button style={styles.contractBtn} onClick={() => alert("Kontrak åbnet!")}>
+          Se kontrakt
+        </button>
       </div>
 
       <style>{`
@@ -86,7 +91,7 @@ const styles = {
     placeItems: "center",
     minHeight: "100vh",
     width: "100%",
-    background: 'url("/13.jpg") no-repeat center center / cover', // <-- opdateret baggrund
+    background: 'url("/13.jpg") no-repeat center center / cover',
     padding: "20px",
     boxSizing: "border-box",
   },
@@ -98,5 +103,17 @@ const styles = {
     width: "100%",
     maxWidth: "600px",
     textAlign: "center",
+  },
+  contractBtn: {
+    marginTop: "20px",
+    padding: "12px 24px",
+    backgroundColor: "#C8A800",
+    color: "#fff",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontWeight: "bold",
+    fontSize: "1rem",
+    transition: "background-color 0.3s ease",
   },
 };

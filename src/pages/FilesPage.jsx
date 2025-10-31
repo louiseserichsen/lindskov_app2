@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
 import { auth, db, storage } from "../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
@@ -10,6 +10,8 @@ export default function FilesPage() {
   const [receivedFiles, setReceivedFiles] = useState([]);
   const [animateTitle, setAnimateTitle] = useState(false);
   const [animateContent, setAnimateContent] = useState(false);
+  const [showLindskovSent, setShowLindskovSent] = useState(false);
+  const [showLindskovReceived, setShowLindskovReceived] = useState(false);
 
   const customerName = "Lindskov";
 
@@ -73,54 +75,81 @@ export default function FilesPage() {
   return (
     <div style={styles.pageWrapper}>
       <div style={styles.wrapper}>
-        <h2 className={`fade-title ${animateTitle ? "animate" : ""}`}>📂 Delte filer</h2>
+        <h2 className={`fade-title ${animateTitle ? "animate" : ""}`}>Delte filer</h2>
 
         <div className={`fade-content ${animateContent ? "animate" : ""}`} style={{ width: "100%" }}>
-          {/* Centreret upload sektion */}
+          {/* Upload sektion */}
           <div style={styles.uploadWrapper}>
-            <label style={styles.uploadBtn}>
-              Vælg fil
-              <input type="file" onChange={handleFileChange} style={{ display: "none" }} />
-            </label>
-            <button style={styles.uploadBtn} onClick={handleUpload}>
-              Upload
-            </button>
+            <div style={styles.uploadRow}>
+              <label style={styles.uploadBtn}>
+                Vælg fil
+                <input type="file" onChange={handleFileChange} style={{ display: "none" }} />
+              </label>
+              <button style={styles.uploadBtn} onClick={handleUpload}>
+                Upload
+              </button>
+            </div>
             {uploadStatus && <p style={getStatusStyle(uploadStatus)}>{uploadStatus}</p>}
           </div>
 
-          <div style={styles.row}>
-            <div style={styles.box}>
+          {/* To bokse – flex-row på desktop, stacked på mobil */}
+          <div className="file-boxes-row">
+            {/* FILER DELT AF DIG */}
+            <div className="file-box">
               <h3 style={styles.boxTitle}>Filer delt af dig</h3>
               <div style={styles.customerTabs}>
-                <button style={styles.activeTab}>{customerName.toUpperCase()}</button>
+                <button
+                  style={{
+                    ...styles.activeTab,
+                    backgroundColor: showLindskovSent ? "#C8A800" : "#aaa",
+                  }}
+                  onClick={() => setShowLindskovSent(!showLindskovSent)}
+                >
+                  {customerName.toUpperCase()}
+                </button>
               </div>
-              <div style={styles.filesList}>
-                <p style={styles.goldText}>
-                  Her vises filer du har delt til: <strong>{customerName}</strong>
-                </p>
-                <ul>
-                  {sentFiles.map((file, index) => (
-                    <li key={index}>{file.name}</li>
-                  ))}
-                </ul>
-              </div>
+
+              {showLindskovSent && (
+                <div style={styles.filesList}>
+                  <p style={styles.goldText}>
+                    Her vises filer du har delt til: <strong>{customerName}</strong>
+                  </p>
+                  <ul>
+                    {sentFiles.map((file, index) => (
+                      <li key={index}>{file.name}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
 
-            <div style={styles.box}>
+            {/* FILER DELT MED DIG */}
+            <div className="file-box">
               <h3 style={styles.boxTitle}>Filer delt med dig</h3>
               <div style={styles.customerTabs}>
-                <button style={styles.activeTab}>{customerName.toUpperCase()}</button>
+                <button
+                  style={{
+                    ...styles.activeTab,
+                    backgroundColor: showLindskovReceived ? "#C8A800" : "#aaa",
+                  }}
+                  onClick={() => setShowLindskovReceived(!showLindskovReceived)}
+                >
+                  {customerName.toUpperCase()}
+                </button>
               </div>
-              <div style={styles.filesList}>
-                <p style={styles.goldText}>
-                  Her vises filer delt med dig fra: <strong>{customerName}</strong>
-                </p>
-                <ul>
-                  {receivedFiles.map((file, index) => (
-                    <li key={index}>{file}</li>
-                  ))}
-                </ul>
-              </div>
+
+              {showLindskovReceived && (
+                <div style={styles.filesList}>
+                  <p style={styles.goldText}>
+                    Her vises filer delt med dig fra: <strong>{customerName}</strong>
+                  </p>
+                  <ul>
+                    {receivedFiles.map((file, index) => (
+                      <li key={index}>{file}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -154,6 +183,38 @@ export default function FilesPage() {
             opacity: 1;
             animation: fadeSlideDown 1s ease forwards;
           }
+
+          /* 💡 Flex row for desktop, stacked on mobile */
+          .file-boxes-row {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+            flex-wrap: wrap;
+          }
+
+          .file-box {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 300px; /* desktop */
+          }
+
+          @media (max-width: 768px) {
+            .file-boxes-row {
+              flex-direction: column;
+              align-items: center;
+              gap: 20px;
+            }
+
+            .file-box {
+              width: 90%; /* fylder næsten hele skærmen */
+            }
+          }
         `}</style>
       </div>
     </div>
@@ -179,20 +240,19 @@ const styles = {
     maxWidth: "900px",
     marginTop: "60px",
   },
-  row: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "flex-start",
-    gap: "20px",
-    flexWrap: "wrap",
-    width: "100%",
-  },
   uploadWrapper: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     marginBottom: "30px",
     gap: "10px",
+  },
+  uploadRow: {
+    display: "flex",
+    flexDirection: "row",
+    gap: "10px",
+    justifyContent: "center",
+    alignItems: "center",
   },
   uploadBtn: {
     backgroundColor: "#C8A800",
@@ -205,16 +265,6 @@ const styles = {
   },
   status: { textAlign: "center", fontWeight: "bold" },
   goldText: { color: "#C8A800", fontWeight: "bold", textAlign: "center" },
-  box: {
-    backgroundColor: "rgba(255, 255, 255, 0.95)",
-    borderRadius: "12px",
-    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-    padding: "20px",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    width: "300px",
-  },
   boxTitle: {
     fontSize: "20px",
     color: "#C8A800",
@@ -229,7 +279,7 @@ const styles = {
     border: "none",
     padding: "8px 12px",
     borderRadius: "6px",
-    cursor: "default",
+    cursor: "pointer",
     fontWeight: "bold",
   },
   filesList: { textAlign: "center" },
