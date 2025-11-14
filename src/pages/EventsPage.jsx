@@ -1,213 +1,115 @@
-// src/pages/EventsPage.jsx
-import React, { useEffect, useState } from "react";
-import { auth } from "../firebase";
-import { Link, Navigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-export default function EventsPage() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+const EventsPage = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [events, setEvents] = useState([
-    { id: 1, title: "Networking Event", date: "2025-11-25", joined: false },
-    { id: 2, title: "Workshop: Marketing", date: "2025-12-05", joined: true },
-    { id: 3, title: "Tech Conference", date: "2025-12-15", joined: false },
-  ]);
-  const [animateTitle, setAnimateTitle] = useState(false);
-  const [animateCard, setAnimateCard] = useState(false);
-  const [animateBoxes, setAnimateBoxes] = useState(false);
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    const timer1 = setTimeout(() => setAnimateTitle(true), 300);
-    const timer2 = setTimeout(() => setAnimateCard(true), 500);
-    const timer3 = setTimeout(() => setAnimateBoxes(true), 800);
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
-    };
-  }, []);
-
-  const handleLogout = () => {
-    auth.signOut();
-    setDropdownOpen(false);
+  const styles = {
+    container: {
+      padding: "20px",
+      backgroundColor: "var(--background-color)"
+    },
+    topBar: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: "20px"
+    },
+    title: {
+      fontSize: "24px",
+      fontWeight: "bold",
+      color: "var(--primary-color)"
+    },
+    menuIcon: {
+      width: "30px",
+      height: "30px",
+      cursor: "pointer"
+    },
+    dropdown: {
+      position: "absolute",
+      top: "60px",
+      right: "20px",
+      backgroundColor: "var(--card-background)",
+      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+      borderRadius: "8px",
+      overflow: "hidden",
+      display: dropdownOpen ? "block" : "none",
+      zIndex: 1000
+    },
+    linkStyle: {
+      display: "block",
+      padding: "12px 20px",
+      textDecoration: "none",
+      color: "var(--text-color)",
+      fontSize: "16px",
+      borderBottom: "1px solid var(--border-color)"
+    },
+    eventCard: {
+      backgroundColor: "var(--card-background)",
+      padding: "15px",
+      borderRadius: "10px",
+      boxShadow: "0 3px 10px rgba(0,0,0,0.1)",
+      marginBottom: "15px"
+    },
+    eventTitle: {
+      fontSize: "18px",
+      fontWeight: "600",
+      marginBottom: "5px"
+    },
+    eventDate: {
+      fontSize: "14px",
+      opacity: 0.7
+    }
   };
 
-  const toggleJoin = (id) => {
-    setEvents(events.map((e) => (e.id === id ? { ...e, joined: !e.joined } : e)));
-  };
-
-  if (loading) return <p>Loading...</p>;
-  if (!user) return <Navigate to="/login" />;
+  // Demo events
+  const events = [
+    { id: 1, title: "Lektier", date: "12. April 2025" },
+    { id: 2, title: "Møde med teamet", date: "15. April 2025" },
+    { id: 3, title: "Biblioteksarbejde", date: "20. April 2025" }
+  ];
 
   return (
-    <>
-      <nav style={styles.navStyle}>
+    <div style={styles.container}>
+      {/* Top Menu Bar */}
+      <div style={styles.topBar}>
+        <h2 style={styles.title}>Events</h2>
         <img
-          src={`${import.meta.env.BASE_URL}lindskovlogo.png`}
-          alt="Logo"
-          style={styles.logoStyle}
-        />
-        <button
-          style={styles.dropdownButton}
+          src="/menu.svg"
+          alt="Menu"
+          style={styles.menuIcon}
           onClick={() => setDropdownOpen(!dropdownOpen)}
-        >
-          Menu ▾
-        </button>
-
-        {dropdownOpen && (
-          <div style={styles.dropdownStyle}>
-            <div style={styles.linksContainer}>
-              <Link to="/" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Hjem</Link>
-              <Link to="/nyheder" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Nyheder</Link>
-              <Link to="/profile" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Profil</Link>
-              <Link to="/upload" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Filer</Link>
-              <Link to="/files" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Delte filer</Link>
-              <Link to="/events" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>Begivenheder</Link>
-              <Link to="/tasks" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}> Aftaler & Opgaver</Link> {/* 👈 tilføjet */}
-              <Link to="/help" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>FAQ</Link>
-            </div>
-            <button style={styles.logoutBtn} onClick={handleLogout}>Log ud</button>
-          </div>
-        )}
-      </nav>
-
-      <div style={styles.pageWrapper}>
-        <div className={`fade-card ${animateCard ? "animate" : ""}`} style={styles.card}>
-          <h2
-            className={`fade-title ${animateTitle ? "animate" : ""}`}
-            style={{
-              color: "#C8A800",
-              textShadow: "3px 3px 6px rgba(0,0,0,0.8)",
-              fontSize: "3rem",
-              marginBottom: "25px",
-              textAlign: "center"
-            }}
-          >
-          Tilmelding
-          </h2>
-
-          <ul style={styles.list}>
-            {events.map((event) => (
-              <li
-                key={event.id}
-                className={`fade-box ${animateBoxes ? "animate" : ""}`}
-                style={styles.listItem}
-              >
-                <div style={styles.eventInfo}>
-                  <strong>{event.title}</strong><br />
-                  <span>{event.date}</span>
-                </div>
-                <button
-                  style={event.joined ? styles.joinedBtn : styles.joinBtn}
-                  onClick={() => toggleJoin(event.id)}
-                >
-                  {event.joined ? "Tilmeldt" : "Tilmeld"}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+        />
       </div>
 
-      <style>{`
-        @keyframes fadeSlideDown {
-          0% { opacity: 0; transform: translateY(-20px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
+      {/* Dropdown Menu */}
+      <div style={styles.dropdown}>
+        <Link to="/" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>
+          Forside
+        </Link>
 
-        .fade-title { opacity: 0; }
-        .fade-title.animate {
-          opacity: 1;
-          animation: fadeSlideDown 1s ease forwards;
-        }
+        <Link to="/events" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>
+          Events
+        </Link>
 
-        .fade-card { opacity: 0; }
-        .fade-card.animate {
-          opacity: 1;
-          animation: fadeSlideDown 1s ease forwards;
-        }
+        <Link to="/tasks" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>
+          Aftaler & Opgaver
+        </Link>
 
-        .fade-box { opacity: 0; }
-        .fade-box.animate {
-          opacity: 1;
-          animation: fadeSlideDown 1s ease forwards;
-        }
-      `}</style>
-    </>
+        <Link to="/profile" style={styles.linkStyle} onClick={() => setDropdownOpen(false)}>
+          Profil
+        </Link>
+      </div>
+
+      {/* Events List */}
+      {events.map((event) => (
+        <div key={event.id} style={styles.eventCard}>
+          <div style={styles.eventTitle}>{event.title}</div>
+          <div style={styles.eventDate}>{event.date}</div>
+        </div>
+      ))}
+    </div>
   );
-}
-
-const styles = {
-  navStyle: { 
-    display: "flex", 
-    alignItems: "center", 
-    justifyContent: "flex-start", 
-    padding: "10px 20px", 
-    backgroundColor: "#000", 
-    position: "fixed", 
-    top: 0, 
-    width: "100%", 
-    zIndex: 1000, 
-    boxShadow: "0 2px 8px rgba(0,0,0,0.3)" 
-  },
-  logoStyle: { height: "50px", width: "auto", marginRight: "30px", borderRadius: "8px" },
-  dropdownButton: { backgroundColor: "#C8A800", color: "#fff", border: "none", borderRadius: 4, padding: "8px 14px", cursor: "pointer", fontWeight: "bold" },
-  dropdownStyle: { 
-    position: "absolute", 
-    left: 120, 
-    top: 55, 
-    backgroundColor: "#fff", 
-    border: "1px solid #ccc", 
-    borderRadius: 6, 
-    boxShadow: "0 2px 8px rgba(0,0,0,0.2)", 
-    zIndex: 1000, 
-    padding: 10, 
-    display: "flex", 
-    flexDirection: "column" 
-  },
-  linksContainer: { display: "flex", flexDirection: "column", flexGrow: 1 },
-  linkStyle: { color: "#C8A800", textDecoration: "none", margin: "6px 0", fontWeight: "bold" },
-  logoutBtn: { display: "block", background: "none", border: "none", padding: 8, width: "100%", textAlign: "left", color: "#C8A800", cursor: "pointer", fontWeight: "bold", marginTop: "auto" },
-
-  pageWrapper: { 
-    display: "grid", 
-    placeItems: "center", 
-    minHeight: "100vh", 
-    width: "100%", 
-    background: 'url("/8.jpg") no-repeat center center / cover',
-    paddingTop: "80px", 
-    boxSizing: "border-box" 
-  },
-
-  card: { 
-    background: "#fff", 
-    padding: "40px 30px", 
-    borderRadius: "16px", 
-    boxShadow: "0 4px 12px rgba(0,0,0,0.15)", 
-    width: "100%", 
-    maxWidth: "500px", 
-    textAlign: "center" 
-  },
-
-  list: { listStyle: "none", padding: 0, margin: 0 },
-  listItem: { 
-    display: "flex", 
-    justifyContent: "space-between", 
-    alignItems: "center", 
-    padding: "12px 15px", 
-    marginBottom: "10px", 
-    backgroundColor: "#f2f2f2", 
-    borderRadius: "8px" 
-  },
-  eventInfo: { textAlign: "left", color: "#000" },
-  joinBtn: { backgroundColor: "#C8A800", color: "#fff", border: "none", borderRadius: "6px", padding: "8px 12px", cursor: "pointer" },
-  joinedBtn: { backgroundColor: "#777", color: "#fff", border: "none", borderRadius: "6px", padding: "8px 12px", cursor: "pointer" },
 };
+
+export default EventsPage;

@@ -31,6 +31,7 @@ export default function Tasks() {
         >
           Aftaler & Opgaver
         </h2>
+
         <p style={styles.description}>
           Her kan du se Lindskovs seneste referater og aftaler.
         </p>
@@ -60,12 +61,14 @@ export default function Tasks() {
           0% { opacity: 0; transform: translateY(-20px); }
           100% { opacity: 1; transform: translateY(0); }
         }
+
         .fade-title { opacity: 0; }
         .fade-title.animate { opacity: 1; animation: fadeSlideDown 1s ease forwards; }
+
         .fade-card { opacity: 0; transform: translateY(20px); }
         .fade-card.animate { opacity: 1; transform: translateY(0); animation: fadeSlideDown 1s ease forwards; }
 
-        /* Responsiv tilpasning */
+        /* Responsivt layout */
         @media (max-width: 900px) {
           .taskGrid {
             grid-template-columns: repeat(2, 1fr);
@@ -115,7 +118,7 @@ const styles = {
   },
   taskGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)", // 🔹 tre bokse pr. række
+    gridTemplateColumns: "repeat(3, 1fr)", // tre bokse pr. række
     gap: "20px",
     marginBottom: "20px",
   },
